@@ -1757,7 +1757,7 @@
 
     function weekDates() {
       const now = new Date();
-      const idx = (now.getDay() + 6) % 7;            // Monday = 0
+      const idx = (now.getDay() + 6) % 7;
       const monday = new Date(now); monday.setDate(now.getDate() - idx); monday.setHours(0, 0, 0, 0);
       const arr = [];
       for (let i = 0; i < 7; i++) { const d = new Date(monday); d.setDate(monday.getDate() + i); arr.push(d); }
@@ -1828,7 +1828,7 @@
       if (idbOk) {
         storageBackend = "indexeddb";
         if (idbVal != null) return typeof idbVal === "string" ? JSON.parse(idbVal) : idbVal;
-        try { if (typeof localStorage !== "undefined") { const v = localStorage.getItem(STORE_KEY); if (v != null) return JSON.parse(v); } } catch (e) { }  // chuyển dữ liệu cũ từ localStorage
+        try { if (typeof localStorage !== "undefined") { const v = localStorage.getItem(STORE_KEY); if (v != null) return JSON.parse(v); } } catch (e) { }
         return null;
       }
       try { if (typeof localStorage !== "undefined") { const v = localStorage.getItem(STORE_KEY); storageBackend = "localstorage"; return v != null ? JSON.parse(v) : null; } } catch (e) { }
@@ -2073,10 +2073,10 @@
         + "</div></div></div>";
       el.querySelectorAll(".tt-block").forEach(b => b.onclick = () => { const c = courseById(b.dataset.id); if (c) openCourseModal(c); });
       el.querySelectorAll(".tt-col").forEach(colEl => colEl.addEventListener("click", e => {
-        if (e.target.closest(".tt-block")) return;                       // clicking an existing class -> edit it, not add
+        if (e.target.closest(".tt-block")) return;
         const rect = colEl.getBoundingClientRect();
-        let minute = rs + ((e.clientY - rect.top) / HH) * 60;            // vertical position -> minutes of day
-        minute = Math.max(rs, Math.min(re - 60, Math.round(minute / 15) * 15));   // snap to 15 min, keep 1h inside range
+        let minute = rs + ((e.clientY - rect.top) / HH) * 60;
+        minute = Math.max(rs, Math.min(re - 60, Math.round(minute / 15) * 15));
         const fmtT = m => pad(Math.floor(m / 60)) + ":" + pad(m % 60);
         openCourseModal(null, { meetingDays: [+colEl.dataset.day], start: fmtT(minute), end: fmtT(minute + 60) });
       }));
@@ -2372,9 +2372,9 @@
         + '<div class="field"><label>Course Code</label><input id="cf_code" value="' + esc(c.code || "") + '" placeholder="ECON-UA 1"></div>'
         + '<div class="field"><label>Instructor</label><input id="cf_inst" value="' + esc(c.instructor || "") + '" placeholder="Optional"></div>'
         + '<div class="field full"><label>Color</label><div class="swatches" id="cf_sw">' + swatches + "</div></div>"
-        + '<div class="field full"><label>Meeting Days</label><div class="days-row" id="cf_days">' + days + "</div></div>"
+
         + '<div class="field"><label>Start Time</label><input type="time" id="cf_start" value="' + esc(c.start || "") + '"></div>'
-        + '<div class="field"><label>End Time</label><input type="time" id="cf_end" value="' + esc(c.end || "") + '"></div>'
+        + '<div class="field"><label>End Time</label><input type="time" id="cf_end" value="' + esc(c.end || "") + '"></div>' + '<div class="field full"><label>Meeting Days</label><div class="days-row" id="cf_days">' + days + '</div><span id="cf_days_err" style="display:none;font-family:var(--mono);font-size:11px;color:var(--red);margin-top:5px">Please pick at least one meeting day.</span></div>'
         + '<div class="field full"><label>Location (Campus)</label>'
         + '<input id="cf_loc" placeholder="Enter address" value="' + esc(c.location || "") + '"></div>'
         + '<div class="field"><label>Completed Assignments</label><input type="number" min="0" id="cf_sdone" value="' + esc(c.syllabusDone || "") + '"></div>'
@@ -2393,7 +2393,11 @@
         cfCustomSw.classList.add("on");
         cfCustomSw.style.background = curColor;
       };
-      document.querySelectorAll("#cf_days .day-chip").forEach(s => s.onclick = () => s.classList.toggle("on"));
+      document.querySelectorAll("#cf_days .day-chip").forEach(s => s.onclick = () => {
+        s.classList.toggle("on");
+        const err = document.getElementById("cf_days_err");
+        if (err && document.querySelectorAll("#cf_days .day-chip.on").length) err.style.display = "none";
+      });
       const del = document.getElementById("modalDelete");
       del.style.display = editing ? "inline-flex" : "none";
       del.onclick = editing ? () => { if (confirm("Delete this course? All tasks associated with the course will be unlinked.")) { deleteCourse(c.id); hideModal(); } } : null;
@@ -2401,6 +2405,12 @@
         const name = document.getElementById("cf_name").value.trim();
         if (!name) { document.getElementById("cf_name").focus(); return; }
         const mdays = [].slice.call(document.querySelectorAll("#cf_days .day-chip.on")).map(x => +x.dataset.day);
+        if (!mdays.length) {
+          const err = document.getElementById("cf_days_err");
+          if (err) err.style.display = "block";
+          document.getElementById("cf_days").scrollIntoView({ block: "center", behavior: "smooth" });
+          return;
+        }
         const obj = {
           name,
           code: document.getElementById("cf_code").value.trim(),
@@ -2447,7 +2457,7 @@
       return { y: y, m: mo, d: d, date: y + "-" + pad(mo) + "-" + pad(d), time: hasTime ? (m[4] + ":" + m[5]) : "", hasTime: hasTime };
     }
     function parseIcs(text) {
-      const raw = text.replace(/\r\n/g, "\n").replace(/\n[ \t]/g, "");   // normalize + unfold
+      const raw = text.replace(/\r\n/g, "\n").replace(/\n[ \t]/g, "");
       const lines = raw.split("\n");
       const courses = [], tasks = []; let ev = null, ci = 0;
       const map = { SU: 6, MO: 0, TU: 1, WE: 2, TH: 3, FR: 4, SA: 5 };
