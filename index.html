@@ -1486,14 +1486,14 @@
     <header class="topbar">
       <div class="brand" id="toggleModeBtn" style="cursor: pointer;" title="Bật/tắt Pomodoro">
         <div class="brand-mark">
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3E2C18" stroke-width="2.2"
+          <svg id="brandIcon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#3E2C18" stroke-width="2.2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" />
             <path d="M4 5.5A2.5 2.5 0 0 0 6.5 8H20" />
           </svg>
         </div>
         <div>
-          <div class="brand-name">Study Planner</div>
+          <div class="brand-name" id="brandName">Study Planner</div>
         </div>
       </div>
       <div class="topbar-right">
@@ -2174,7 +2174,7 @@
           ? '<div class="empty">Radar needs at least 3 subjects (you have ' + items.length + '). Add more, or use Bars view.</div>'
           : radarChart(items);
         return;
-      }
+      } m
 
       const rows = data.courses.map(c => {
         const pct = c.syllabusTotal > 0 ? Math.round(c.syllabusDone / c.syllabusTotal * 100) : 0;
@@ -2202,7 +2202,13 @@
         { name: "To Do", value: Math.round(todo / total * 100), color: "#C98A1E" }
       ];
       document.getElementById("donut").innerHTML = donut(split);
-      document.getElementById("donutNum").textContent = Math.round(done / total * 100) + "%";
+      const donutCenter = document.querySelector(".donut-center");
+      if (!data.tasks.length) {
+        if (donutCenter) donutCenter.style.display = "none";
+      } else {
+        if (donutCenter) donutCenter.style.display = "";
+        document.getElementById("donutNum").textContent = Math.round(done / total * 100) + "%";
+      }
       document.getElementById("subjPill").textContent = data.tasks.length + " tasks";
       const rows = TASK_TYPES.map(([k, lbl]) => {
         const arr = t.filter(x => x.type === k);
@@ -2549,11 +2555,11 @@
       data = loaded && Array.isArray(loaded.courses) ? loaded : seed();
       normalizeData();
       document.getElementById("clockDate").textContent = new Date().toLocaleDateString("en-US", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" });
+      tickClock();
+      setInterval(tickClock, 1000);
       wireEvents();
       renderAll();
       updateStorageBadge();
-      tickClock();
-      setInterval(tickClock, 1000);
       setInterval(renderTopStatus, 60000);
     }
 
@@ -2682,10 +2688,21 @@
     const mainView = document.getElementById('mainView');
     const pomodoroView = document.getElementById('pomodoroView');
     let isPomodoroMode = false;
+    const brandName = document.getElementById('brandName');
+    const brandIcon = document.getElementById('brandIcon');
+    const bookSvg = '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" /><path d="M4 5.5A2.5 2.5 0 0 0 6.5 8H20" />';
+    const clockSvg = '<circle cx="12" cy="12" r="8" /><polyline points="12 8 12 12 15 14" />';
     brandToggleBtn.addEventListener('click', () => {
       isPomodoroMode = !isPomodoroMode;
-      if (isPomodoroMode) { mainView.style.display = 'none'; pomodoroView.style.display = 'flex'; }
-      else { mainView.style.display = 'flex'; pomodoroView.style.display = 'none'; }
+      if (isPomodoroMode) {
+        mainView.style.display = 'none'; pomodoroView.style.display = 'flex';
+        if (brandName) brandName.textContent = 'Pomodoro Mode';
+        if (brandIcon) brandIcon.innerHTML = clockSvg;
+      } else {
+        mainView.style.display = 'flex'; pomodoroView.style.display = 'none';
+        if (brandName) brandName.textContent = 'Study Planner';
+        if (brandIcon) brandIcon.innerHTML = bookSvg;
+      }
     });
     const pomoTime = document.getElementById('pomoTime');
     const pomoLabel = document.getElementById('pomoLabel');
