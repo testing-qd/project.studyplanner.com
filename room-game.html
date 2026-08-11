@@ -1,0 +1,2232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Room</title>
+  <style>
+    /* ---- tokens: identical set to Study Planner so both files scale the same ---- */
+    :root {
+      --bg: #F4F5F7;
+      --bg-glow: rgba(0, 82, 204, 0.04);
+      --surface: #FFFFFF;
+      --surface2: #EBECF0;
+      --nested: #DFE1E6;
+      --line: #C1C7D0;
+      --line-soft: #DFE1E6;
+      --text: #172B4D;
+      --text-on-primary: #FFFFFF;
+      --muted: #5E6C84;
+      --muted2: #8993A4;
+      --gold: #0052CC;
+      --gold-2: #0747A6;
+      --amber: #FFAB00;
+      --cyan: #00B8D9;
+      --green: #36B37E;
+      --red: #FF5630;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    }
+
+    body[data-theme="dark"] {
+      --bg: #1E1A17;
+      --bg-glow: rgba(206, 142, 28, 0.05);
+      --surface: #29241E;
+      --surface2: #332D26;
+      --nested: #231E18;
+      --line: #453B31;
+      --line-soft: #383028;
+      --text: #EFE3C6;
+      --text-on-primary: #1E1A17;
+      --muted: #A78F6C;
+      --muted2: #8A6E4E;
+      --gold: #A9691A;
+      --gold-2: #CE8E1C;
+      --amber: #D9A94F;
+      --cyan: #E7C9A6;
+      --green: #839144;
+      --red: #C25A2B;
+    }
+
+    body[data-theme="matcha"] {
+      --bg: #E8EDE4;
+      --bg-glow: rgba(111, 122, 52, 0.10);
+      --surface: #F3F6F1;
+      --surface2: #EAF0E8;
+      --nested: #DEE6DA;
+      --line: #B5C6AD;
+      --line-soft: #C9D6C3;
+      --text: #2A3622;
+      --text-on-primary: #F3F6F1;
+      --muted: #627958;
+      --muted2: #8A9D82;
+      --gold: #6F7A34;
+      --gold-2: #515B22;
+      --amber: #8B993D;
+      --cyan: #3F7E79;
+      --green: #4A6337;
+      --red: #A6401E;
+    }
+
+    body[data-theme="sakura"] {
+      --bg: #F9F0F2;
+      --bg-glow: rgba(193, 107, 134, 0.08);
+      --surface: #FCFAFB;
+      --surface2: #F4E8EA;
+      --nested: #EBD9DD;
+      --line: #DDBDC4;
+      --line-soft: #E6CED3;
+      --text: #4A2B32;
+      --text-on-primary: #FCFAFB;
+      --muted: #9F6B78;
+      --muted2: #B38692;
+      --gold: #C16B86;
+      --gold-2: #9F546C;
+      --amber: #D489A1;
+      --cyan: #846B9F;
+      --green: #8CA37A;
+      --red: #C25A6E;
+    }
+
+    body[data-theme="ocean"] {
+      --bg: #E3F2FD;
+      --bg-glow: rgba(33, 150, 243, 0.08);
+      --surface: #F5FAFF;
+      --surface2: #EBF4FC;
+      --nested: #DCEAF7;
+      --line: #BBDEFB;
+      --line-soft: #D0E7FA;
+      --text: #0D2A4C;
+      --text-on-primary: #FFFFFF;
+      --muted: #4A6E94;
+      --muted2: #7093B8;
+      --gold: #1976D2;
+      --gold-2: #1565C0;
+      --amber: #F57C00;
+      --cyan: #0097A7;
+      --green: #388E3C;
+      --red: #D32F2F;
+    }
+
+    body[data-theme="sunset"] {
+      --bg: #FDF2E9;
+      --bg-glow: rgba(230, 81, 0, 0.08);
+      --surface: #FFFCFA;
+      --surface2: #FCEBE1;
+      --nested: #F7DFD2;
+      --line: #F0D4C3;
+      --line-soft: #F5E2D7;
+      --text: #4A2012;
+      --text-on-primary: #FFFFFF;
+      --muted: #824B36;
+      --muted2: #A66E58;
+      --gold: #E65100;
+      --gold-2: #BF360C;
+      --amber: #F57F17;
+      --cyan: #0277BD;
+      --green: #2E7D32;
+      --red: #C62828;
+    }
+
+    body[data-theme="lavender"] {
+      --bg: #F3E5F5;
+      --bg-glow: rgba(156, 39, 176, 0.08);
+      --surface: #FCFAFD;
+      --surface2: #F0E1F4;
+      --nested: #E9D2EF;
+      --line: #D7C2DF;
+      --line-soft: #E4D2EB;
+      --text: #311B3B;
+      --text-on-primary: #FFFFFF;
+      --muted: #6A4A7A;
+      --muted2: #926FA3;
+      --gold: #8E24AA;
+      --gold-2: #6A1B9A;
+      --amber: #F57F17;
+      --cyan: #00838F;
+      --green: #2E7D32;
+      --red: #C62828;
+    }
+
+    body[data-theme="forest"] {
+      --bg: #E8F5E9;
+      --bg-glow: rgba(56, 142, 60, 0.08);
+      --surface: #F4FBF5;
+      --surface2: #E0F0E3;
+      --nested: #D2E8D6;
+      --line: #C2DBCA;
+      --line-soft: #D4E8DC;
+      --text: #1B3B22;
+      --text-on-primary: #FFFFFF;
+      --muted: #426B4A;
+      --muted2: #65946F;
+      --gold: #2E7D32;
+      --gold-2: #1B5E20;
+      --amber: #F57F17;
+      --cyan: #00695C;
+      --green: #558B2F;
+      --red: #C62828;
+    }
+
+    body[data-theme="warm beige"] {
+      --bg: #F2E6CC;
+      --bg-glow: rgba(194, 90, 43, 0.10);
+      --surface: #FCF7EA;
+      --surface2: #F7EFD9;
+      --nested: #EFE3C6;
+      --line: #DAC69C;
+      --line-soft: #EADCBB;
+      --text: #3E2C18;
+      --text-on-primary: #3E2C18;
+      --muted: #8A6E4E;
+      --muted2: #A78F6C;
+      --gold: #CE8E1C;
+      --gold-2: #A9691A;
+      --amber: #C98A1E;
+      --cyan: #C25A2B;
+      --green: #6F7A34;
+      --red: #A6401E;
+    }
+
+    body[data-theme="contrast"] {
+      --bg: #000000;
+      --bg-glow: rgba(255, 255, 255, 0.15);
+      --surface: #111111;
+      --surface2: #222222;
+      --nested: #1A1A1A;
+      --line: #555555;
+      --line-soft: #333333;
+      --text: #FFFFFF;
+      --text-on-primary: #000000;
+      --muted: #CCCCCC;
+      --muted2: #999999;
+      --gold: #FFFF00;
+      --gold-2: #FFCC00;
+      --amber: #FF9900;
+      --cyan: #00FFFF;
+      --green: #00FF00;
+      --red: #FF3333;
+    }
+
+    body[data-font="sans"] {
+      --mono: var(--sans);
+    }
+
+    body[data-font="serif"] {
+      --mono: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    /* ---- shell: same padding, gap and rhythm as the planner ---- */
+    .root {
+      background: radial-gradient(1100px 560px at 12% -12%, var(--bg-glow) 0%, transparent 55%), var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      height: 100vh;
+      overflow: auto;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .topbar {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, var(--bg-glow), transparent), var(--surface);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      font-size: 21px;
+      color: var(--text-on-primary);
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      box-shadow: 0 0 20px var(--bg-glow);
+    }
+
+    .brand-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a,
+    .nav-links button {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 11px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: .12s;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links button:hover {
+      color: var(--text);
+      background: var(--surface2);
+    }
+
+    .nav-links .active {
+      color: var(--cyan);
+      background: var(--surface2);
+      font-weight: 700;
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    /* class + live clock, matching Study Planner exactly */
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .shift {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      text-align: right;
+      max-width: 320px;
+    }
+
+    .shift-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .clock {
+      text-align: right;
+    }
+
+    .live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--green);
+      font-family: var(--mono);
+      letter-spacing: .05em;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    .clock-time {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      line-height: 1.15;
+    }
+
+    .clock-date {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: capitalize;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .35;
+      }
+    }
+
+    .dev-chip {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: #fff;
+      background: var(--red);
+      border-radius: 5px;
+      padding: 3px 7px;
+      margin-left: 10px;
+      white-space: nowrap;
+    }
+
+    .dev-chip[hidden] {
+      display: none;
+    }
+
+    .seg {
+      display: inline-flex;
+      background: var(--nested);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .seg button {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      letter-spacing: .03em;
+      transition: all .12s;
+    }
+
+    .seg button:hover {
+      color: var(--text);
+    }
+
+    .seg button.on {
+      background: var(--surface2);
+      color: var(--cyan);
+    }
+
+    .dev-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--line);
+    }
+
+    /* study-hour balance, shown in the shop header */
+    .budget {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      background: var(--surface2);
+      border: 1px solid var(--line-soft);
+      border-radius: 999px;
+      padding: 5px 14px;
+      white-space: nowrap;
+    }
+
+    .budget-val {
+      font-family: var(--mono);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--gold-2);
+      letter-spacing: .03em;
+    }
+
+    .budget-lbl {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .budget.over .budget-val {
+      color: var(--red);
+    }
+
+    .dev-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .budget.dev {
+      border-color: var(--red);
+    }
+
+    .budget.dev .budget-val {
+      color: var(--red);
+    }
+
+    /* ---- panels: planner metrics (12px radius, 16px padding, 14px gaps) ---- */
+    .panel {
+      flex-shrink: 0;
+      background: var(--surface);
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      padding: 16px;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted2);
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 3px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .pill-muted {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--line-soft);
+      padding: 3px 9px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      background: var(--surface2);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+      transition: border-color .12s, color .12s, background .12s;
+    }
+
+    .btn:hover {
+      border-color: var(--cyan);
+      color: var(--text);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      color: var(--text-on-primary);
+      border: none;
+      font-weight: 600;
+    }
+
+    .btn.ghost {
+      background: transparent;
+    }
+
+    .btn[disabled] {
+      opacity: .4;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .btn.danger {
+      color: var(--red);
+      border-color: var(--line-soft);
+    }
+
+    .btn.danger:hover {
+      background: var(--bg-glow);
+      color: var(--red);
+    }
+
+    /* ---- page title: outside the topbar, under the wordmark ---- */
+    .page-title {
+      flex-shrink: 0;
+      padding-left: 74px;
+      margin-bottom: -6px;
+    }
+
+    /* ---- room stage: no frame, fills whatever height is left ---- */
+    .stage-wrap {
+      flex: 1 1 auto;
+      min-height: 210px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    #stage {
+      flex: 1 1 auto;
+      min-height: 0;
+      width: 100%;
+      cursor: ew-resize;
+      touch-action: pan-y;
+    }
+
+    #stage svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: manipulation;
+    }
+
+    .tile {
+      cursor: pointer;
+      transition: fill .1s;
+    }
+
+    .tile:hover {
+      fill: #EBD9A8 !important;
+    }
+
+    .tile.ok {
+      fill: #CBE0AE !important;
+    }
+
+    .tile.bad {
+      fill: #EFC9BE !important;
+    }
+
+    .furni {
+      cursor: grab;
+    }
+
+    .furni.picked {
+      filter: drop-shadow(0 0 2px var(--cyan)) drop-shadow(0 0 6px var(--cyan));
+    }
+
+    .furni:hover {
+      opacity: .82;
+    }
+
+    .hint {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+      min-height: 18px;
+    }
+
+    .hint b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .stage-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* ---- shop ---- */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 8px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: grab;
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+      text-align: left;
+      background: var(--surface2);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor: pointer;
+      font-family: var(--mono);
+      color: var(--text);
+      min-width: 0;
+      transition: border-color .12s, background .12s;
+    }
+
+    .item:hover {
+      border-color: var(--cyan);
+    }
+
+    .item.sel {
+      border-color: var(--cyan);
+      background: var(--nested);
+    }
+
+    .item.poor {
+      opacity: .45;
+    }
+
+    .item-icon {
+      width: 30px;
+      flex-shrink: 0;
+    }
+
+    .item-icon svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .item-name {
+      font-size: 12.5px;
+      font-weight: 600;
+      flex: 1;
+      min-width: 0;
+      font-family: var(--sans);
+    }
+
+    .item-size {
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: var(--muted2);
+      border: 1px solid var(--line-soft);
+      border-radius: 4px;
+      padding: 1px 4px;
+      margin-left: 6px;
+      vertical-align: 1px;
+    }
+
+    .item-cost {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--gold-2);
+      white-space: nowrap;
+    }
+
+    .sub {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin: 0 0 8px;
+    }
+
+    .style-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .skins {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .skin {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--nested);
+      border: 1px solid var(--line-soft);
+      border-radius: 7px;
+      padding: 6px 9px;
+      cursor: pointer;
+      font-family: var(--mono);
+      color: var(--text);
+      transition: border-color .12s;
+    }
+
+    .skin:hover {
+      border-color: var(--cyan);
+    }
+
+    .skin.cur {
+      border-color: var(--cyan);
+      background: var(--surface2);
+    }
+
+    .skin-sw {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.14);
+    }
+
+    .skin-name {
+      font-size: 11.5px;
+      font-weight: 600;
+      font-family: var(--sans);
+    }
+
+    .skin-tag {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--gold-2);
+    }
+
+    .ach-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ach {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      background: var(--surface2);
+      border: 1px solid var(--line-soft);
+      border-left: 3px solid var(--green);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .ach.locked {
+      border-left-color: var(--line);
+      opacity: .55;
+      filter: grayscale(0.6);
+    }
+
+    .ach-emoji {
+      font-size: 22px;
+    }
+
+    .ach-name {
+      font-size: 12.5px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .ach-desc {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted2);
+      margin-top: 2px;
+    }
+
+    .ach-state {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+
+    .kv {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12.5px;
+      padding: 11px 2px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .kv .k {
+      color: var(--muted);
+    }
+
+    .kv .v {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      font-weight: 600;
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 14px;
+      background: var(--surface2);
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+
+    .note b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ---- the piece being carried from the shop ---- */
+    .carry {
+      position: fixed;
+      z-index: 70;
+      width: 62px;
+      margin: -52px 0 0 -31px;
+      pointer-events: none;
+      opacity: .95;
+      filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.28));
+    }
+
+    .carry svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    body.carrying,
+    body.carrying * {
+      cursor: grabbing !important;
+    }
+
+    /* ---- toast ---- */
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 26px;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--text);
+      color: var(--bg);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .25s;
+      z-index: 60;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ---- modal: planner metrics ---- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px;
+      z-index: 50;
+      overflow: auto;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 540px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--muted2);
+      cursor: pointer;
+      padding: 4px;
+      display: inline-flex;
+      border-radius: 6px;
+      font-size: 18px;
+      line-height: 1;
+      transition: .12s;
+    }
+
+    .icon-btn:hover {
+      color: var(--cyan);
+      background: var(--surface2);
+    }
+
+    .modal-foot {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+    }
+
+    /* ---- same breakpoints as the planner ---- */
+    @media (max-width: 600px) {
+      .root {
+        padding: 12px;
+      }
+
+      .page-title {
+        padding-left: 0;
+      }
+
+      .style-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      #toast {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="root">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">🏠</div>
+        <div>
+          <div class="brand-name">My Room</div>
+        </div>
+        <span class="dev-chip" id="devChip" hidden>DEV</span>
+      </div>
+      <nav class="nav-links">
+        <a href="#" class="active">Room</a>
+        <a href="index.html">Study Planner</a>
+        <a href="index.html#pomodoro">Pomodoro</a>
+        <button id="navAch">Achievements <span id="achBadge">0/0</span></button>
+        <button id="navSettings">Settings</button>
+      </nav>
+      <span class="spacer"></span>
+      <div class="topbar-right">
+        <div class="shift">
+          <span class="eyebrow">Class</span>
+          <span class="shift-val" id="topStatus">—</span>
+          <span class="eyebrow" id="topDuration" style="text-transform:none;letter-spacing:.02em"></span>
+        </div>
+        <div class="clock">
+          <div class="live"><span class="dot"></span> Live</div>
+          <div class="clock-time" id="clockTime">--:--:--</div>
+          <div class="clock-date" id="clockDate"></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-title">
+      <span class="eyebrow">Your space</span>
+      <div class="panel-title">Bedroom</div>
+    </div>
+
+    <section class="stage-wrap">
+      <div id="stage"></div>
+      <div class="hint" id="hint"></div>
+      <div class="stage-actions" id="pieceActions" hidden></div>
+      <div class="stage-actions">
+        <button class="btn ghost" id="viewLeft" title="Turn the room left — or drag it (←)">◀</button>
+        <button class="btn" id="rotateBtn" style="display:none">↻ Rotate</button>
+        <button class="btn ghost" id="viewRight" title="Turn the room right — or drag it (→)">▶</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="eyebrow">Spend your coins</span>
+          <div class="panel-title">Furniture shop</div>
+        </div>
+        <div class="budget" title="Study hours from completed tasks, minus what you have spent">
+          <span class="budget-val" id="coinAmt">0h</span>
+          <span class="budget-lbl">left to spend</span>
+        </div>
+      </div>
+      <div class="shop-grid" id="shopItems"></div>
+      <div class="style-row">
+        <div>
+          <div class="sub">Floor style</div>
+          <div class="skins" id="floorSkins"></div>
+        </div>
+        <div>
+          <div class="sub">Wall style</div>
+          <div class="skins" id="wallSkins"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast"></div>
+
+  <div class="modal-backdrop" id="achModal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <span class="modal-title">🏆 Achievements</span>
+        <button class="icon-btn" data-close aria-label="Close">&times;</button>
+      </div>
+      <div class="ach-list" id="achList"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <span class="modal-title">⚙️ Settings</span>
+        <button class="icon-btn" data-close aria-label="Close">&times;</button>
+      </div>
+      <div id="coinBreak"></div>
+      <div class="dev-row">
+        <div>
+          <span class="eyebrow">Developer budget</span>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">This browser only — everyone else sees real
+            hours</div>
+        </div>
+        <div class="seg" id="devSeg">
+          <button data-dev="">Off</button>
+          <button data-dev="100">+100h</button>
+          <button data-dev="inf">Unlimited</button>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="refreshBtn" title="Re-read completed tasks from Study Planner">↻ Sync hours</button>
+        <a class="btn ghost" href="index.html">← Back to Study Planner</a>
+        <button class="btn danger" id="resetAll">Reset everything</button>
+      </div>
+      <div class="note">
+        <b>How the budget works:</b> your balance is the <b>estimated hours</b> of every task you have marked
+        <b>Done</b> in Study Planner, plus a small starter bonus. Furniture and room styles cost hours, and removing a
+        piece refunds it — rearranging is free.<br><br>
+        The theme and font follow whatever you pick in Study Planner's settings.<br><br>
+        Coins sync when both files are opened from the <b>same address</b>. Serve the folder with
+        <code>python3 -m http.server</code> and open <code>http://localhost:8000/</code>; opened straight as a
+        <code>file://</code> the two pages may not share storage.
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    // ===== config =====
+    const TW = 56, TH = 28, GRID = 6, WALL_H = 96, OX = 190, OY = 198, CW = 380, CH = 300;
+    // ---- developer sandbox ----------------------------------------------------
+    // Off for everybody by default, and it lives only in THIS browser's localStorage,
+    // so handing the file to someone else gives them the normal economy.
+    //   ?dev        or ?dev=inf   unlimited hours
+    //   ?dev=100                  a fixed 100h, so the "not enough" path still runs
+    //   ?dev=0                    budget back to normal, controls stay in Settings
+    //   ?dev=off                  forget it entirely, back to a clean build
+    const DEV_KEY = "room:dev";
+    let devBudget = null;          // null = normal economy
+    let devArmed = false;          // whether the Settings controls are unlocked
+
+    function readDevFlag() {
+      let raw = null;
+      try { raw = localStorage.getItem(DEV_KEY); } catch (e) { }
+      const m = (location.search + location.hash).match(/[?&#]dev(?:=([^&#]*))?/i);
+      if (m) {
+        const v = decodeURIComponent(m[1] || "").toLowerCase();
+        if (v === "off" || v === "disarm") raw = null;
+        else if (v === "" || v === "inf" || v === "infinity" || v === "max") raw = "Infinity";
+        else raw = String(parseFloat(v) || 0);
+        try { raw === null ? localStorage.removeItem(DEV_KEY) : localStorage.setItem(DEV_KEY, raw); } catch (e) { }
+      }
+      devArmed = raw !== null;
+      devBudget = (raw === null || raw === "0") ? null : (raw === "Infinity" ? Infinity : parseFloat(raw));
+    }
+    function setDev(v) {
+      devBudget = v;
+      devArmed = true;
+      const raw = v === null ? "0" : (v === Infinity ? "Infinity" : String(v));
+      try { localStorage.setItem(DEV_KEY, raw); } catch (e) { }
+      renderAll();
+    }
+
+    const STARTER_HOURS = 8;                       // a little seed budget for a brand-new room
+    const DOW_FULL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const GAME_DB = "roomGameDB", GAME_KEY = "roomGame:v1";
+    const PLANNER_DB = "studyPlannerDB", PLANNER_KEY = "sp:data:v1";
+
+    // ===== data =====
+    const FLOORS = {
+      wood: { name: "Wood", cost: 0, a: "#C6A16B", b: "#BC9760" },
+      tile: { name: "Tile", cost: 3, a: "#E7E2D6", b: "#DBD5C6" },
+      mint: { name: "Mint", cost: 3, a: "#BFE3D0", b: "#B1DAC3" },
+      slate: { name: "Slate", cost: 4, a: "#717A85", b: "#656D77" }
+    };
+    const WALLS = {
+      cream: { name: "Cream", cost: 0, left: "#F2E9D8", right: "#E7DCC6" },
+      sky: { name: "Sky", cost: 3, left: "#CFE3F2", right: "#BCD4E9" },
+      blush: { name: "Blush", cost: 3, left: "#F3DADF", right: "#E8C9D0" },
+      sage: { name: "Sage", cost: 3, left: "#D7E1C9", right: "#C7D4B6" }
+    };
+    // w x d = footprint in tiles. top = model height in px (crops the shop preview)
+    const FURN = [
+      { id: "rug", name: "Rug", cost: 1, color: "#B5651D", top: 2, w: 1, d: 1 },
+      { id: "plant", name: "Plant", cost: 2, color: "#4E9A5B", top: 42, w: 1, d: 1 },
+      { id: "chair", name: "Chair", cost: 2, color: "#8A6D5A", top: 44, w: 1, d: 1 },
+      { id: "lamp", name: "Lamp", cost: 2, color: "#E6C35C", top: 54, w: 1, d: 1 },
+      { id: "table", name: "Tea table", cost: 3, color: "#A9784F", top: 34, w: 1, d: 1 },
+      { id: "shelf", name: "Bookshelf", cost: 5, color: "#7A5230", top: 62, w: 1, d: 1 },
+      { id: "cat", name: "Cat", cost: 6, color: "#E0A15E", top: 34, w: 1, d: 1 },
+      { id: "desk", name: "Desk", cost: 4, color: "#A9784F", top: 58, w: 3, d: 1 },
+      { id: "sofa", name: "Sofa", cost: 4, color: "#B06C6C", top: 42, w: 2, d: 1 },
+      { id: "bed", name: "Bed", cost: 4, color: "#6C88B0", top: 38, w: 2, d: 2 },
+      { id: "tv", name: "TV", cost: 5, color: "#3C3C3C", top: 48, w: 2, d: 1 }
+    ];
+    const ACHIEVEMENTS = [
+      { id: "first", emoji: "🌱", name: "Getting started", desc: "Place your first piece of furniture.", test: (s) => s.placed.length >= 1 },
+      { id: "cozy", emoji: "🛋️", name: "Cozy corner", desc: "Place 5 pieces of furniture.", test: (s) => s.placed.length >= 5 },
+      { id: "designer", emoji: "🏡", name: "Interior designer", desc: "Place 10 pieces of furniture.", test: (s) => s.placed.length >= 10 },
+      { id: "redecorate", emoji: "🎨", name: "Redecorator", desc: "Unlock a new floor or wall style.", test: (s) => (s.skinsOwned.floor.length + s.skinsOwned.wall.length) > 2 },
+      { id: "productive", emoji: "⭐", name: "Productive", desc: "Complete 10 tasks in Study Planner.", test: (s, st) => st.completedTasks >= 10 },
+      { id: "focused", emoji: "🔥", name: "Focused", desc: "Complete 25 tasks in Study Planner.", test: (s, st) => st.completedTasks >= 25 },
+      { id: "lock tf in!", emoji: "🔒", name: "Lock TF in!", desc: "Experienced a 4-hour pomodoro focus session.", test: (s, st) => st.studyHours >= 4 }
+    ];
+
+    // ===== state =====
+    let state = {
+      placed: [], floor: "wood", wall: "cream",
+      skinsOwned: { floor: ["wood"], wall: ["cream"] },
+      achievements: {}, selected: null, rotated: false,
+      picked: null,        // index of the placed piece the user has clicked
+      moving: null         // index of the piece waiting for a new tile
+    };
+    let carry = null;                              // piece being dragged, from the shop or the room
+    let swallowClick = false;                      // a finished drag must not also count as a click
+    let planner = { courses: [], tasks: [] };      // mirror of the Study Planner file
+    let completedTasks = 0, studyHours = 0;
+    const mem = {};
+
+    // ===== storage (IndexedDB -> localStorage -> memory) =====
+    function idbOpen(dbName) {
+      return new Promise((resolve, reject) => {
+        if (typeof indexedDB === "undefined") { reject(new Error("no-idb")); return; }
+        const rq = indexedDB.open(dbName, 1);
+        rq.onupgradeneeded = () => rq.result.createObjectStore("kv");
+        rq.onsuccess = () => resolve(rq.result);
+        rq.onerror = () => reject(rq.error);
+      });
+    }
+    async function idbGet(dbName, key) {
+      const db = await idbOpen(dbName);
+      return new Promise((resolve) => {
+        let rq;
+        try { rq = db.transaction("kv", "readonly").objectStore("kv").get(key); }
+        catch (e) { resolve(null); return; }
+        rq.onsuccess = () => resolve(rq.result === undefined ? null : rq.result);
+        rq.onerror = () => resolve(null);
+      });
+    }
+    async function idbSet(dbName, key, val) {
+      const db = await idbOpen(dbName);
+      return new Promise((resolve, reject) => {
+        const rq = db.transaction("kv", "readwrite").objectStore("kv").put(val, key);
+        rq.onsuccess = () => resolve(true);
+        rq.onerror = () => reject(rq.error);
+      });
+    }
+
+    async function saveGame() {
+      const persist = { placed: state.placed, floor: state.floor, wall: state.wall, skinsOwned: state.skinsOwned, achievements: state.achievements, yaw: yaw };
+      const s = JSON.stringify(persist);
+      try { await idbSet(GAME_DB, GAME_KEY, s); return; } catch (e) { }
+      try { if (typeof localStorage !== "undefined") { localStorage.setItem(GAME_KEY, s); return; } } catch (e) { }
+      mem[GAME_KEY] = s;
+    }
+    async function loadGame() {
+      let raw = null;
+      try { raw = await idbGet(GAME_DB, GAME_KEY); } catch (e) { }
+      if (raw == null) { try { if (typeof localStorage !== "undefined") raw = localStorage.getItem(GAME_KEY); } catch (e) { } }
+      if (raw == null) raw = mem[GAME_KEY] || null;
+      if (!raw) return;
+      try {
+        const d = typeof raw === "string" ? JSON.parse(raw) : raw;
+        state.placed = Array.isArray(d.placed) ? d.placed : [];
+        state.floor = FLOORS[d.floor] ? d.floor : "wood";
+        state.wall = WALLS[d.wall] ? d.wall : "cream";
+        state.skinsOwned = {
+          floor: (d.skinsOwned && Array.isArray(d.skinsOwned.floor)) ? d.skinsOwned.floor : ["wood"],
+          wall: (d.skinsOwned && Array.isArray(d.skinsOwned.wall)) ? d.skinsOwned.wall : ["cream"]
+        };
+        if (state.skinsOwned.floor.indexOf("wood") < 0) state.skinsOwned.floor.push("wood");
+        if (state.skinsOwned.wall.indexOf("cream") < 0) state.skinsOwned.wall.push("cream");
+        state.achievements = d.achievements || {};
+        yaw = isFinite(d.yaw) ? d.yaw : 0;
+        sanitizePlaced();
+      } catch (e) { }
+    }
+    async function readPlanner() {
+      let raw = null;
+      try { raw = await idbGet(PLANNER_DB, PLANNER_KEY); } catch (e) { }
+      if (raw == null) { try { if (typeof localStorage !== "undefined") raw = localStorage.getItem(PLANNER_KEY); } catch (e) { } }
+      if (!raw) return { courses: [], tasks: [] };
+      try {
+        const d = typeof raw === "string" ? JSON.parse(raw) : raw;
+        return { courses: Array.isArray(d.courses) ? d.courses : [], tasks: Array.isArray(d.tasks) ? d.tasks : [] };
+      } catch (e) { return { courses: [], tasks: [] }; }
+    }
+    function absorbPlanner(d) {
+      planner = d;
+      const done = planner.tasks.filter(t => t.status === "done" || t.completedAt);
+      completedTasks = done.length;
+      studyHours = done.reduce((a, t) => a + (Number(t.estHours) || 0), 0);
+    }
+
+    // ===== iso drawing kit =====
+    const n1 = v => (Math.round(v * 10) / 10);
+    const P = pts => pts.map(p => n1(p[0]) + "," + n1(p[1])).join(" ");
+
+    function shade(hex, f) {
+      const n = parseInt(hex.slice(1), 16);
+      let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+      r = Math.min(255, Math.round(r * f)); g = Math.min(255, Math.round(g * f)); b = Math.min(255, Math.round(b * f));
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+
+    // ---- free rotation about the room's vertical axis ----
+    let yaw = 0;                                  // radians, any value
+    const HALF = GRID / 2;
+
+    // grid coords -> centred, yaw-rotated coords
+    function turn(x, y) {
+      const cs = Math.cos(yaw), sn = Math.sin(yaw);
+      const X = x - HALF, Y = y - HALF;
+      return [X * cs - Y * sn, X * sn + Y * cs];
+    }
+    const isoPt = (x, y, z) => {
+      const q = turn(x, y);
+      return [OX + (q[0] - q[1]) * (TW / 2), OY + (q[0] + q[1]) * (TH / 2) - (z || 0)];
+    };
+    // how near the viewer a grid position is; bigger = nearer = painted later
+    const depthAt = (x, y) => { const q = turn(x, y); return q[0] + q[1]; };
+    // same two numbers for a direction rather than a position
+    const dirDepth = (dx, dy) => { const cs = Math.cos(yaw), sn = Math.sin(yaw); return dx * (cs + sn) + dy * (cs - sn); };
+    const dirSide = (dx, dy) => { const cs = Math.cos(yaw), sn = Math.sin(yaw); return dx * (cs - sn) - dy * (sn + cs); };
+
+    const poly = (pts, fill) => '<polygon points="' + P(pts) + '" fill="' + fill + '"/>';
+    const ell = (p, rx, ry, fill, rot) =>
+      '<ellipse cx="' + n1(p[0]) + '" cy="' + n1(p[1]) + '" rx="' + rx + '" ry="' + ry + '" fill="' + fill + '"'
+      + (rot ? ' transform="rotate(' + rot + ' ' + n1(p[0]) + ' ' + n1(p[1]) + ')"' : '') + '/>';
+    const dot = (p, r, fill) => '<circle cx="' + n1(p[0]) + '" cy="' + n1(p[1]) + '" r="' + r + '" fill="' + fill + '"/>';
+
+    // quay model đúng 90°·k quanh trục đứng, không lật gương
+    function turnMap(rot) {
+      const k = (((rot | 0) % 4) + 4) % 4;
+      return (u, v) => k === 0 ? [u, v] : k === 1 ? [1 - v, u] : k === 2 ? [1 - u, 1 - v] : [v, 1 - u];
+    }
+
+    // p3 for a shop preview: fixed angle, its own origin
+    function makeP3(ox, oy, c, r, fw, fd, rot) {
+      fw = fw || 1; fd = fd || 1;
+      const k = (((rot | 0) % 4) + 4) % 4, m = turnMap(k);
+      const at = (u, v) => { const a = m(u, v); return [c + a[0] * fw, r + a[1] * fd]; };
+      const f = (u, v, z) => {
+        const q = at(u, v);
+        return [ox + (q[0] - q[1]) * (TW / 2), oy + (q[0] + q[1]) * (TH / 2) - (z || 0)];
+      };
+      f.d = (u, v) => { const q = at(u, v); return q[0] + q[1]; };
+      f.mw = (k % 2) ? fd : fw; f.md = (k % 2) ? fw : fd;   // kích thước gốc của model, tính theo ô
+      return f;
+    }
+
+    // p3 for a piece standing in the room: follows the current yaw
+    function roomP3(c, r, fw, fd, rot) {
+      const k = (((rot | 0) % 4) + 4) % 4, m = turnMap(k);
+      const at = (u, v) => { const a = m(u, v); return [c + a[0] * fw, r + a[1] * fd]; };
+      const f = (u, v, z) => { const q = at(u, v); return isoPt(q[0], q[1], z); };
+      f.d = (u, v) => { const q = at(u, v); return depthAt(q[0], q[1]); };
+      f.mw = (k % 2) ? fd : fw; f.md = (k % 2) ? fw : fd;
+      return f;
+    }
+
+    // Which way a model's own u/v axes run on screen right now.
+    // .u / .v are true when that axis points toward the viewer.
+    function facing(p3) {
+      const o = p3(0, 0, 0), du = p3(1, 0, 0), dv = p3(0, 1, 0);
+      return { u: (du[1] - o[1]) > 0, v: (dv[1] - o[1]) > 0, ux: du[0] - o[0], vx: dv[0] - o[0] };
+    }
+
+    // parts strung out along one axis: pass them far-to-near, flip when the axis flips
+    const seq = (farFirst, list) => (farFirst ? list : list.slice().reverse()).join("");
+    // parts scattered across the footprint: sort by their own depth
+    const ordered = (p3, items) =>
+      items.slice().sort((a, b) => p3.d(a[0], a[1]) - p3.d(b[0], b[1])).map(i => i[2]).join("");
+
+    // an isometric cuboid. Visible side faces are resolved from the axes, so it is
+    // correct at any yaw; whichever face points right is the darker one.
+    function box(p3, u0, v0, u1, v1, z0, z1, col, topF) {
+      const f = facing(p3);
+      const uFace = f.u ? u1 : u0, vFace = f.v ? v1 : v0;
+      const uDark = (f.ux * (f.u ? 1 : -1)) > 0, vDark = (f.vx * (f.v ? 1 : -1)) > 0;
+      const b = (u, v) => p3(u, v, z0), t = (u, v) => p3(u, v, z1);
+      return poly([b(uFace, v0), b(uFace, v1), t(uFace, v1), t(uFace, v0)], shade(col, uDark ? 0.70 : 0.85))
+        + poly([b(u0, vFace), b(u1, vFace), t(u1, vFace), t(u0, vFace)], shade(col, vDark ? 0.70 : 0.85))
+        + poly([t(u0, v0), t(u1, v0), t(u1, v1), t(u0, v1)], shade(col, topF || 1.06));
+    }
+    const groundShadow = (p3, rx, ry) => ell(p3(0.5, 0.5, 0), rx, ry, "rgba(70,50,25,0.13)");
+
+    // ===== furniture models =====
+    // Anything whose parts sit side by side gets ordered from the current view, so the
+    // painter's order stays right through a full turn.
+    const DRAW = {
+      rug(p3) {
+        const q = (u, v) => p3(u, v, 0.6);
+        const A = "#A8571A", B = "#C9803B", C = "#E4B37A";
+        return poly([q(.04, .04), q(.96, .04), q(.96, .96), q(.04, .96)], A)
+          + poly([q(.12, .12), q(.88, .12), q(.88, .88), q(.12, .88)], B)
+          + poly([q(.24, .24), q(.76, .24), q(.76, .76), q(.24, .76)], C)
+          + poly([q(.36, .36), q(.64, .36), q(.64, .64), q(.36, .64)], B)
+          + poly([q(.45, .45), q(.55, .45), q(.55, .55), q(.45, .55)], A);
+      },
+
+      plant(p3) {
+        let s = groundShadow(p3, 15, 7);
+        s += box(p3, .36, .36, .64, .64, 0, 12, "#A9633C");
+        s += box(p3, .32, .32, .68, .68, 12, 16, "#C07A4E");
+        s += poly([p3(.34, .34, 16), p3(.66, .34, 16), p3(.66, .66, 16), p3(.34, .66, 16)], "#4A3826");
+        const c = p3(.5, .5, 16);
+        const leaf = (dx, dy, rx, ry, rot, f) => ell([c[0] + dx, c[1] + dy], rx, ry, f, rot);
+        s += leaf(-11, -8, 8, 3.6, -28, "#3B7040");
+        s += leaf(11, -9, 8, 3.6, 28, "#4E9A5B");
+        s += leaf(-7, -17, 7, 3.2, -58, "#57A866");
+        s += leaf(8, -18, 7, 3.2, 58, "#3B7040");
+        s += leaf(0, -14, 4.6, 9, 0, "#4E9A5B");
+        s += leaf(0, -23, 3.6, 6.5, 0, "#63B972");
+        return s;
+      },
+
+      chair(p3, col) {
+        const w = col || "#8A6D5A";
+        let s = groundShadow(p3, 16, 8);
+        const leg = (u, v) => [u + .05, v + .05, box(p3, u, v, u + .10, v + .10, 0, 16, shade(w, .78))];
+        s += ordered(p3, [leg(.22, .22), leg(.68, .22), leg(.22, .68), leg(.68, .68)]);
+        s += box(p3, .17, .17, .83, .83, 16, 21, w);            // seat sits above every leg
+        s += box(p3, .21, .15, .79, .21, 21, 42, shade(w, .93)); // backrest starts at seat level
+        s += box(p3, .21, .14, .79, .20, 30, 33, shade(w, 1.12));
+        return s;
+      },
+
+      lamp(p3, col) {
+        const sh = col || "#E6C35C";
+        let s = groundShadow(p3, 13, 6);
+        s += ell(p3(.5, .5, 0), 21, 10, "rgba(230,195,92,0.16)");
+        s += box(p3, .40, .40, .60, .60, 0, 3, "#57503F");
+        s += box(p3, .47, .47, .53, .53, 3, 34, "#8A7C63");
+        const b = p3(.5, .5, 34), t = p3(.5, .5, 50);
+        s += poly([[b[0] - 15, b[1]], [b[0] + 15, b[1]], [t[0] + 9, t[1]], [t[0] - 9, t[1]]], sh);
+        s += ell(b, 15, 6, shade(sh, .84));
+        s += ell(t, 9, 3.6, shade(sh, 1.14));
+        return s;
+      },
+
+      table(p3, col) {
+        const w = col || "#A9784F";
+        let s = groundShadow(p3, 20, 10);
+        const leg = (u, v) => [u + .045, v + .045, box(p3, u, v, u + .09, v + .09, 0, 20, shade(w, .76))];
+        s += ordered(p3, [leg(.13, .13), leg(.78, .13), leg(.13, .78), leg(.78, .78)]);
+        s += box(p3, .05, .05, .95, .95, 20, 25, w);
+        s += ell(p3(.5, .5, 25), 11, 5.5, shade(w, .9));
+        s += box(p3, .44, .44, .56, .56, 25, 30, "#F2EDE2");
+        s += ell(p3(.5, .5, 30), 7.5, 3.8, "#7FA85C");
+        s += ell([p3(.5, .5, 30)[0] - 2, p3(.5, .5, 30)[1] - 1], 2.6, 1.2, "rgba(255,255,255,0.35)");
+        return s;
+      },
+
+      desk(p3, col) {
+        const w = col || "#A9784F";
+        const f = facing(p3);
+        const W = p3.mw || 2, U = x => x / W, mid = W / 2;   // toạ độ tính bằng SỐ Ô
+        let s = groundShadow(p3, 14 * W + 2, 13);
+        s += ordered(p3, [
+          [U(0.14), .50, box(p3, U(0.06), .12, U(0.22), .88, 0, 24, shade(w, .84))],       // chân trái
+          [U(W - 0.14), .50, box(p3, U(W - 0.22), .12, U(W - 0.06), .88, 0, 24, shade(w, .84))], // chân phải
+          [U(mid), .17, box(p3, U(0.22), .14, U(W - 0.22), .20, 5, 24, shade(w, .72))]     // vách sau
+        ]);
+        s += box(p3, U(0.02), .06, U(W - 0.02), .94, 24, 28, w);                            // mặt bàn
+        const screen = f.v
+          ? poly([p3(U(mid - 0.28), .42, 39), p3(U(mid + 0.28), .42, 39), p3(U(mid + 0.28), .42, 53), p3(U(mid - 0.28), .42, 53)], "#4E7A93")
+          + poly([p3(U(mid - 0.28), .42, 39), p3(U(mid - 0.02), .42, 39), p3(U(mid - 0.28), .42, 53)], "rgba(255,255,255,0.10)")
+          : poly([p3(U(mid - 0.28), .38, 39), p3(U(mid + 0.28), .38, 39), p3(U(mid + 0.28), .38, 53), p3(U(mid - 0.28), .38, 53)], "#3A3A3A");
+        s += ordered(p3, [
+          [U(mid), .40, box(p3, U(mid - 0.12), .34, U(mid + 0.12), .46, 28, 30, "#3A3A3A")
+            + box(p3, U(mid - 0.03), .385, U(mid + 0.03), .415, 30, 37, "#4A4A4A")
+            + box(p3, U(mid - 0.28), .38, U(mid + 0.28), .42, 37, 55, "#2E2E2E") + screen],
+          [U(mid), .67, box(p3, U(mid - 0.22), .56, U(mid + 0.22), .78, 28, 30, "#E8E3D6")],
+          [U(W - 0.55), .44, box(p3, U(W - 0.70), .30, U(W - 0.40), .58, 28, 31, "#C25A45")
+            + box(p3, U(W - 0.685), .315, U(W - 0.415), .565, 31, 34, "#6F9B57")],
+          [U(0.42), .50, box(p3, U(0.34), .44, U(0.50), .56, 28, 33, "#F2EDE2")
+            + ell(p3(U(0.42), .50, 33), 4, 2.2, "#8A5A32")]
+        ]);
+        return s;
+      },
+
+      bed(p3, col) {
+        const cloth = col || "#6C88B0", wood = "#8A6A48";
+        const f = facing(p3);
+        let s = groundShadow(p3, 28, 13);
+        const headboard = box(p3, .01, .03, .08, .97, 9, 36, shade(wood, .96));
+        const pillows = box(p3, .11, .12, .25, .47, 19, 26, "#FFFDF7")
+          + box(p3, .11, .53, .25, .88, 19, 26, "#FFFDF7");
+        const blanket = box(p3, .34, .08, .96, .92, 19, 24, cloth)
+          + box(p3, .34, .08, .41, .92, 24, 26, shade(cloth, 1.16));
+        s += box(p3, .03, .05, .97, .95, 0, 9, wood);                      // frame
+        if (f.u) s += headboard;                                           // head end is at the back
+        s += box(p3, .08, .08, .96, .92, 9, 19, "#F6F2E7");                // mattress
+        s += seq(f.u, [pillows, blanket]);
+        if (!f.u) s += headboard;                                          // ...or nearest the viewer
+        return s;
+      },
+
+      sofa(p3, col) {
+        const c = col || "#B06C6C";
+        const f = facing(p3);
+        let s = groundShadow(p3, 22, 11);
+        const backrest = box(p3, .12, .12, .88, .30, 8, 40, shade(c, .95));
+        s += box(p3, .12, .12, .88, .88, 0, 8, shade(c, .70));             // plinth
+        if (f.v) s += backrest;
+        s += box(p3, .16, .28, .84, .86, 8, 14, shade(c, .82));            // seat deck
+        s += seq(f.u, [
+          box(p3, .12, .28, .25, .88, 8, 22, shade(c, 1.04)),              // arm L
+          box(p3, .26, .31, .49, .84, 14, 21, c, 1.30),                    // cushion L
+          box(p3, .51, .31, .74, .84, 14, 21, c, 1.30),                    // cushion R
+          box(p3, .75, .28, .88, .88, 8, 22, shade(c, 1.04))               // arm R
+        ]);
+        if (!f.v) s += backrest;
+        return s;
+      },
+
+      tv(p3, col) {
+        const dark = col || "#3C3C3C";
+        const f = facing(p3);
+        let s = groundShadow(p3, 20, 10);
+        s += box(p3, .12, .28, .88, .74, 0, 12, "#6E4A2A");
+        const cv = f.v ? .74 : .28;                                        // cabinet seam, visible side
+        s += poly([p3(.16, cv, 3), p3(.84, cv, 3), p3(.84, cv, 9), p3(.16, cv, 9)], "#5A3C22");
+        s += box(p3, .45, .45, .55, .57, 12, 17, "#2B2B2B");
+        s += box(p3, .13, .47, .87, .53, 17, 44, dark);
+        if (f.v) {                                                         // screen faces us
+          s += poly([p3(.16, .53, 19.5), p3(.84, .53, 19.5), p3(.84, .53, 41.5), p3(.16, .53, 41.5)], "#3E5A70");
+          s += poly([p3(.16, .53, 19.5), p3(.52, .53, 19.5), p3(.16, .53, 41.5)], "rgba(255,255,255,0.10)");
+          s += dot(p3(.83, .53, 21), 1.2, "#8FD17A");
+        } else {                                                           // we are round the back
+          s += poly([p3(.18, .47, 21), p3(.82, .47, 21), p3(.82, .47, 40), p3(.18, .47, 40)], shade(dark, .82));
+        }
+        return s;
+      },
+
+      shelf(p3, col) {
+        const w = col || "#7A5230";
+        const f = facing(p3);
+        let s = groundShadow(p3, 20, 10);
+        const backPanel = box(p3, .16, .22, .84, .28, 0, 60, shade(w, .78));
+        if (f.v) s += backPanel;
+        const BOOKS = ["#C25A45", "#6F9B57", "#D6A02C", "#5B7FA6", "#8B6BA8", "#C97A3C"];
+        let slabs = "", shelfBooks = [], bi = 0;
+        [0, 19, 38].forEach(z0 => {
+          slabs += box(p3, .16, .22, .84, .46, z0, z0 + 3, shade(w, 1.06));
+          let u = .26;
+          while (u < .70) {
+            const bw = .035 + (bi % 3) * .012;
+            const bh = 11 + (bi % 4) * 1.6;
+            shelfBooks.push([u, box(p3, u, .31, u + bw, .44, z0 + 3, z0 + 3 + bh, BOOKS[bi % BOOKS.length])]);
+            u += bw + .012; bi++;
+          }
+        });
+        slabs += box(p3, .16, .22, .84, .46, 57, 60, shade(w, 1.06));
+        s += slabs;                                                        // books stand on the slabs
+        shelfBooks.sort((a, b) => a[0] - b[0]);
+        s += seq(f.u, [box(p3, .16, .22, .23, .46, 0, 60, w)]              // left upright
+          .concat(shelfBooks.map(b => b[1]))
+          .concat([box(p3, .77, .22, .84, .46, 0, 60, w)]));               // right upright
+        if (!f.v) s += backPanel;
+        return s;
+      },
+
+      cat(p3, col) {
+        const o = col || "#E0A15E", d = shade(o, .82), lt = shade(o, 1.12);
+        let s = groundShadow(p3, 13, 6);
+        const body = p3(.56, .62, 6), head = p3(.40, .42, 19);
+        s += '<path d="M' + n1(body[0] + 12) + ' ' + n1(body[1] + 2)
+          + ' q 15 -2 10 -14 q -4 -9 -12 -5" fill="none" stroke="' + o + '" stroke-width="5" stroke-linecap="round"/>';
+        s += ell(body, 15.5, 9, o);
+        s += ell([body[0] - 3, body[1] - 2.5], 6, 2.4, d, -20);
+        s += ell([body[0] + 4, body[1] + 0.5], 5, 2.1, d, -20);
+        s += ell([body[0] - 9, body[1] + 5], 4.4, 2.6, lt, -16);
+        s += ell([body[0] - 2, body[1] + 6.5], 4.4, 2.6, lt, -16);
+        s += poly([[head[0] - 7.4, head[1] - 3.6], [head[0] - 4.2, head[1] - 12.5], [head[0] - 0.6, head[1] - 4]], o);
+        s += poly([[head[0] + 7.4, head[1] - 3.6], [head[0] + 4.2, head[1] - 12.5], [head[0] + 0.6, head[1] - 4]], o);
+        s += poly([[head[0] - 5.9, head[1] - 5], [head[0] - 4.3, head[1] - 10.2], [head[0] - 2.3, head[1] - 5.2]], "#D89A9A");
+        s += poly([[head[0] + 5.9, head[1] - 5], [head[0] + 4.3, head[1] - 10.2], [head[0] + 2.3, head[1] - 5.2]], "#D89A9A");
+        s += ell(head, 8.6, 7.6, o);
+        s += ell([head[0], head[1] + 2.8], 5.2, 3.4, "#F7E9D5");
+        s += dot([head[0] - 3.3, head[1] - 1], 1.6, "#3E3524");
+        s += dot([head[0] + 3.3, head[1] - 1], 1.6, "#3E3524");
+        s += poly([[head[0] - 1.4, head[1] + 1.3], [head[0] + 1.4, head[1] + 1.3], [head[0], head[1] + 3]], "#C4707A");
+        return s;
+      }
+    };
+
+    function drawPiece(id, p3, color) {
+      return DRAW[id] ? DRAW[id](p3, color) : "";
+    }
+
+    const rotOf = r => (((r | 0) % 4) + 4) % 4;
+    function fit(id, rot) {
+      const d = FURN.find(f => f.id === id);
+      const w = (d && d.w) || 1, h = (d && d.d) || 1;
+      return (rotOf(rot) % 2) ? [h, w] : [w, h];
+    }
+    const isBig = id => { const f = fit(id, 0); return f[0] * f[1] > 1; };
+    const canRotate = () => true;
+    function tilesOf(it) {
+      const [w, h] = fit(it.id, it.rot), out = [];
+      for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) out.push([it.c + i, it.r + j]);
+      return out;
+    }
+    function occupiedTiles(skip) {
+      const set = new Set();
+      state.placed.forEach((it, i) => { if (i !== skip) tilesOf(it).forEach(t => set.add(t[0] + ":" + t[1])); });
+      return set;
+    }
+    function canPlace(c, r, w, h, skip) {
+      if (c < 0 || r < 0 || c + w > GRID || r + h > GRID) return false;
+      const occ = occupiedTiles(skip);
+      for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) if (occ.has((c + i) + ":" + (r + j))) return false;
+      return true;
+    }
+    function sanitizePlaced() {
+      const keep = [], occ = new Set();
+      state.placed.forEach(it => {
+        if (!FURN.some(f => f.id === it.id)) return;
+        const [w, h] = fit(it.id, it.rot);
+        if (it.c < 0 || it.r < 0 || it.c + w > GRID || it.r + h > GRID) return;
+        for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) if (occ.has((it.c + i) + ":" + (it.r + j))) return;
+        for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) occ.add((it.c + i) + ":" + (it.r + j));
+        keep.push(it);
+      });
+      state.placed = keep;
+    }
+
+    // small standalone preview used in the shop list
+    function pieceIcon(id) {
+      const d = FURN.find(f => f.id === id);
+      if (!d) return "";
+      const w = d.w || 1, h = d.d || 1;
+      const ox = 6 + h * (TW / 2), baseY = 60;
+      const vbW = (w + h) * (TW / 2) + 12;
+      const y0 = baseY - (d.top || 20) - 6;
+      const vbH = (baseY + (w + h) * (TH / 2) + 8) - y0;
+      return '<svg viewBox="0 ' + y0 + ' ' + vbW + ' ' + vbH + '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+        + drawPiece(id, makeP3(ox, baseY, 0, 0, w, h, false), d.color) + '</svg>';
+    }
+
+    // ===== helpers =====
+    const pad = n => String(n).padStart(2, "0");
+    const fmtH = n => !isFinite(n) ? "∞" : (Math.round(n * 10) / 10) + "h";
+
+    function budget() {
+      const earned = devBudget === null ? studyHours + STARTER_HOURS : devBudget;
+      let spent = 0;
+      state.placed.forEach(p => { const d = FURN.find(f => f.id === p.id); if (d) spent += d.cost; });
+      ["floor", "wall"].forEach(kind => {
+        const set = kind === "floor" ? FLOORS : WALLS;
+        state.skinsOwned[kind].forEach(id => { if (set[id]) spent += set[id].cost; });
+      });
+      return { earned, spent, available: earned - spent };
+    }
+
+    // ===== room render =====
+    function roomSVG() {
+      const floor = FLOORS[state.floor], wall = WALLS[state.wall];
+      let s = "";
+
+      // Only the walls facing away from the camera are drawn, so the room stays open
+      // toward the viewer at every angle. Which two those are changes as you turn.
+      const EDGES = [
+        { a: [0, 0], b: [GRID, 0], n: [0, -1] },
+        { a: [GRID, 0], b: [GRID, GRID], n: [1, 0] },
+        { a: [GRID, GRID], b: [0, GRID], n: [0, 1] },
+        { a: [0, GRID], b: [0, 0], n: [-1, 0] }
+      ];
+      EDGES.forEach(e => {
+        if (dirDepth(e.n[0], e.n[1]) >= 0) return;                 // that wall is in front of us
+        const b0 = isoPt(e.a[0], e.a[1], 0), b1 = isoPt(e.b[0], e.b[1], 0);
+        const fill = dirSide(e.n[0], e.n[1]) > 0 ? wall.right : wall.left;
+        s += '<polygon points="' + P([b0, b1, [b1[0], b1[1] - WALL_H], [b0[0], b0[1] - WALL_H]]) + '" fill="' + fill + '"/>';
+      });
+
+      // Tiles keep MODEL coords in their data attributes, so placement, collision and
+      // the hover preview never need to know the room has been turned.
+      for (let r = 0; r < GRID; r++) for (let c = 0; c < GRID; c++) {
+        const q = [isoPt(c, r, 0), isoPt(c + 1, r, 0), isoPt(c + 1, r + 1, 0), isoPt(c, r + 1, 0)];
+        const col = ((c + r) % 2 === 0) ? floor.a : floor.b;
+        s += '<polygon class="tile" data-c="' + c + '" data-r="' + r + '" points="' + P(q) + '" fill="' + col + '" stroke="rgba(0,0,0,0.05)" stroke-width="1"/>';
+      }
+      const n = state.placed.length;
+      const bx = state.placed.map(it => {
+        const f = fit(it.id, it.rot);
+        return { x0: it.c, x1: it.c + f[0], y0: it.r, y1: it.r + f[1] };
+      });
+      const ux = dirDepth(1, 0), uy = dirDepth(0, 1), sg = v => v > 0 ? 1 : v < 0 ? -1 : 0;
+      const after = [], indeg = new Array(n).fill(0);
+      for (let i = 0; i < n; i++) after.push([]);
+      for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+        const A = bx[i], B = bx[j];
+        const sepX = (A.x0 >= B.x1) ? 1 : (B.x0 >= A.x1 ? -1 : 0);
+        const sepY = (A.y0 >= B.y1) ? 1 : (B.y0 >= A.y1 ? -1 : 0);
+        let rel = 0;
+        if (sepX && Math.abs(ux) >= Math.abs(uy)) rel = sepX * sg(ux);
+        else if (sepY) rel = sepY * sg(uy);
+        else if (sepX) rel = sepX * sg(ux);
+        if (rel > 0) { after[j].push(i); indeg[i]++; }
+        else if (rel < 0) { after[i].push(j); indeg[j]++; }
+      }
+      const nearness = i => {
+        let best = -Infinity;
+        tilesOf(state.placed[i]).forEach(t => { best = Math.max(best, depthAt(t[0] + 0.5, t[1] + 0.5)); });
+        return best;
+      };
+      const ready = [], order = [];
+      for (let i = 0; i < n; i++) if (!indeg[i]) ready.push(i);
+      while (ready.length) {
+        ready.sort((a, b) => nearness(a) - nearness(b));
+        const i = ready.shift(); order.push(i);
+        after[i].forEach(j => { if (--indeg[j] === 0) ready.push(j); });
+      }
+      for (let i = 0; i < n; i++) if (order.indexOf(i) < 0) order.push(i);
+      order.forEach(gi => {
+        const it = state.placed[gi], d = FURN.find(f => f.id === it.id); if (!d) return;
+        const f = fit(it.id, it.rot);
+        s += '<g class="furni' + (gi === state.picked ? " picked" : "") + '" data-i="' + gi + '">'
+          + drawPiece(d.id, roomP3(it.c, it.r, f[0], f[1], it.rot), d.color) + '</g>';
+      });
+
+      // corner posts + ceiling outline
+      const corners = [[0, 0], [GRID, 0], [GRID, GRID], [0, GRID]];
+      const foot = corners.map(c => isoPt(c[0], c[1], 0));
+      const head = corners.map(c => isoPt(c[0], c[1], WALL_H));
+      const L = (a, b) => '<line x1="' + n1(a[0]) + '" y1="' + n1(a[1]) + '" x2="' + n1(b[0]) + '" y2="' + n1(b[1]) + '" stroke="rgba(60,40,20,0.18)" stroke-width="1.2"/>';
+      let lines = "";
+      for (let i = 0; i < 4; i++) {
+        lines += L(head[i], head[(i + 1) % 4]);
+        lines += L(foot[i], head[i]);
+      }
+      s += '<g style="pointer-events:none">' + lines + '</g>';
+      return '<svg viewBox="0 0 ' + CW + ' ' + CH + '" xmlns="http://www.w3.org/2000/svg">' + s + '</svg>';
+    }
+
+    // ===== ui render =====
+    function renderCoins() {
+      const av = budget().available;
+      const el = document.getElementById("coinAmt");
+      el.textContent = fmtH(av);
+      document.getElementById("devChip").hidden = devBudget === null;
+      // going negative only happens after leaving the sandbox with a room you overbought
+      el.parentElement.classList.toggle("over", devBudget === null && av < 0);
+    }
+
+    // same logic the planner uses for its own class strip
+    function renderTopStatus() {
+      const now = new Date(), idx = (now.getDay() + 6) % 7;
+      const mins = now.getHours() * 60 + now.getMinutes();
+      const toM = t => { const p = (t || "0:0").split(":").map(Number); return p[0] * 60 + p[1]; };
+      const onDay = di => planner.courses.filter(c => (c.meetingDays || []).indexOf(di) >= 0 && c.start);
+      const todays = onDay(idx).map(c => ({ c: c, s: toM(c.start), e: toM(c.end || c.start) })).sort((a, b) => a.s - b.s);
+      let label = "No classes scheduled", dur = "";
+      const ongoing = todays.find(x => mins >= x.s && mins < x.e);
+      if (ongoing) { label = "Ongoing · " + (ongoing.c.code || ongoing.c.name); dur = ongoing.c.start + "–" + ongoing.c.end; }
+      else {
+        const next = todays.find(x => x.s > mins);
+        if (next) { label = "Next · " + (next.c.code || next.c.name); dur = next.c.start + "–" + next.c.end; }
+        else {
+          for (let k = 1; k <= 7; k++) {
+            const di = (idx + k) % 7;
+            const cs = onDay(di).sort((a, b) => toM(a.start) - toM(b.start));
+            if (cs.length) { label = DOW_FULL[di] + " · " + (cs[0].code || cs[0].name); dur = cs[0].start + "–" + cs[0].end; break; }
+          }
+        }
+      }
+      document.getElementById("topStatus").textContent = label;
+      document.getElementById("topDuration").textContent = dur ? ("Time: " + dur) : "";
+    }
+
+    function tickClock() {
+      const n = new Date();
+      document.getElementById("clockTime").textContent = pad(n.getHours()) + ":" + pad(n.getMinutes()) + ":" + pad(n.getSeconds());
+    }
+    function renderRoom() { document.getElementById("stage").innerHTML = roomSVG(); }
+    function renderPieceActions() {
+      const el = document.getElementById("pieceActions");
+      const it = state.picked !== null ? state.placed[state.picked] : null;
+      if (!it) { el.hidden = true; el.innerHTML = ""; return; }
+      el.hidden = false;
+      el.innerHTML =
+        '<button class="btn" data-act="turn"' + (canRotate(it.id) ? "" : " disabled") + '>↻ Turn</button>'
+        + '<button class="btn' + (state.moving !== null ? " primary" : "") + '" data-act="move">✥ Move</button>'
+        + '<button class="btn danger" data-act="remove">🗑 Remove</button>'
+        + '<button class="btn ghost" data-act="done">Done</button>';
+    }
+
+    function renderHint() {
+      const h = document.getElementById("hint");
+      const rb = document.getElementById("rotateBtn");
+      const held = state.picked !== null ? state.placed[state.picked] : null;
+      if (held) {
+        const hd = FURN.find(f => f.id === held.id);
+        rb.style.display = "none";
+        h.innerHTML = state.moving !== null
+          ? 'Moving <b>' + hd.name + '</b> — click an empty tile to drop it there, or click the piece again to cancel.'
+          : 'Selected <b>' + hd.name + '</b> — turn it, drag it to another tile, or remove it (the hours come back).';
+        return;
+      }
+      if (state.selected) {
+        const d = FURN.find(f => f.id === state.selected);
+        const f = fit(d.id, state.rotated);
+        const big = f[0] * f[1] > 1;
+        rb.style.display = canRotate(d.id) ? "inline-flex" : "none";
+        rb.textContent = "↻ Rotate (" + f[0] + "×" + f[1] + ")";
+        h.innerHTML = 'Selected <b>' + d.name + '</b>'
+          + (big ? ' — takes <b>' + f[0] + '×' + f[1] + '</b> tiles. ' : ' — ')
+          + 'Click a floor tile to place it (the tile you click is its back-left corner). Click a placed item to remove it. Move outside the room to turn it.';
+      }
+    }
+    function renderShop() {
+      const av = budget().available;
+      document.getElementById("shopItems").innerHTML = FURN.map(f => {
+        const sel = state.selected === f.id, afford = f.cost <= av;
+        const w = f.w || 1, h = f.d || 1, big = w * h > 1;
+        return '<button class="item' + (sel ? " sel" : "") + (afford ? "" : " poor") + '" data-item="' + f.id + '">'
+          + '<span class="item-icon" style="width:' + (big ? 42 : 30) + 'px">' + pieceIcon(f.id) + '</span>'
+          + '<span class="item-name">' + f.name
+          + (big ? '<span class="item-size">' + w + '×' + h + '</span>' : '') + '</span>'
+          + '<span class="item-cost">' + f.cost + 'h</span></button>';
+      }).join("");
+      const chip = (kind, id) => {
+        const set = kind === "floor" ? FLOORS : WALLS, sk = set[id];
+        const owned = state.skinsOwned[kind].indexOf(id) >= 0, cur = state[kind] === id;
+        const sw = kind === "floor" ? sk.a : sk.left;
+        const tag = owned ? (cur ? "✓" : "Use") : (sk.cost + "h");
+        return '<button class="skin' + (cur ? " cur" : "") + '" data-skin="' + kind + ":" + id + '">'
+          + '<span class="skin-sw" style="background:' + sw + '"></span>'
+          + '<span class="skin-name">' + sk.name + '</span><span class="skin-tag">' + tag + '</span></button>';
+      };
+      document.getElementById("floorSkins").innerHTML = Object.keys(FLOORS).map(id => chip("floor", id)).join("");
+      document.getElementById("wallSkins").innerHTML = Object.keys(WALLS).map(id => chip("wall", id)).join("");
+    }
+    function renderAchievements() {
+      const unlocked = ACHIEVEMENTS.filter(a => state.achievements[a.id]).length;
+      document.getElementById("achBadge").textContent = unlocked + "/" + ACHIEVEMENTS.length;
+      document.getElementById("achList").innerHTML = ACHIEVEMENTS.map(a => {
+        const on = !!state.achievements[a.id];
+        return '<div class="ach' + (on ? "" : " locked") + '"><span class="ach-emoji">' + a.emoji + '</span>'
+          + '<div><div class="ach-name">' + a.name + '</div><div class="ach-desc">' + a.desc + '</div></div>'
+          + '<span class="ach-state">' + (on ? "Unlocked" : "Locked") + '</span></div>';
+      }).join("");
+    }
+    function renderCoinBreak() {
+      const c = budget();
+      let html = '<div class="kv"><span class="k">Tasks completed (Study Planner)</span><span class="v">' + completedTasks + '</span></div>'
+        + '<div class="kv"><span class="k">Study hours logged</span><span class="v">' + fmtH(studyHours) + '</span></div>'
+        + (devBudget === null
+          ? '<div class="kv"><span class="k">Starter bonus</span><span class="v">' + fmtH(STARTER_HOURS) + '</span></div>'
+          : '<div class="kv"><span class="k" style="color:var(--red)">Sandbox budget (overrides the above)</span><span class="v" style="color:var(--red)">' + fmtH(devBudget) + '</span></div>')
+        + '<div class="kv"><span class="k">Hours spent on the room</span><span class="v">' + fmtH(c.spent) + '</span></div>'
+        + '<div class="kv"><span class="k">Left to spend</span><span class="v" style="color:var(--gold-2)">' + fmtH(c.available) + '</span></div>';
+      if (devArmed) {
+        const on = v => (devBudget === v ? " primary" : "");
+        html += '<div class="sub" style="margin-top:18px">Developer sandbox</div>'
+          + '<div class="dev-row">'
+          + '<button class="btn' + on(null) + '" data-dev="off">Normal</button>'
+          + '<button class="btn' + on(100) + '" data-dev="100">100h</button>'
+          + '<button class="btn' + on(Infinity) + '" data-dev="inf">∞ Unlimited</button>'
+          + '</div>'
+          + '<div class="note">This browser only — it is never written into the room save, so anyone else opening the file gets the normal economy. Load the page with <code>?dev=off</code> to remove these controls entirely.</div>';
+      }
+      document.getElementById("coinBreak").innerHTML = html;
+    }
+    function renderAll() { renderCoins(); renderTopStatus(); renderRoom(); renderHint(); renderPieceActions(); renderShop(); renderCoinBreak(); }
+
+    // ===== actions =====
+    function afterChange() { saveGame(); renderAll(); checkAchievements(); }
+    function selectItem(id) {
+      state.selected = (state.selected === id) ? null : id;
+      state.picked = null; state.moving = null;
+      if (!state.selected) state.rotated = 0;
+      renderHint(); renderShop();
+    }
+    const TAU = Math.PI * 2;
+    let yawSaveT;
+    function rotateView(radians) {
+      yaw = (yaw + radians) % TAU;
+      if (yaw < 0) yaw += TAU;
+      renderRoom();
+      clearTimeout(yawSaveT);
+      yawSaveT = setTimeout(saveGame, 400);          // don't hammer storage while dragging
+    }
+    function rotateSelection() {
+      if (!state.selected) return;
+      state.rotated = rotOf(state.rotated + 1);
+      renderHint(); renderShop();
+    }
+    function placeAt(c, r) {
+      if (!state.selected) { toast("Pick an item from the shop first."); return; }
+      const d = FURN.find(f => f.id === state.selected);
+      if (!d) return;
+      const f = fit(d.id, state.rotated);
+      if (!canPlace(c, r, f[0], f[1])) {
+        toast(f[0] * f[1] > 1 ? ("The " + d.name + " needs " + f[0] + "x" + f[1] + " free tiles — try another spot or rotate it.")
+          : "That spot is taken — click the item to remove it.");
+        return;
+      }
+      if (d.cost > budget().available) { toast("Not enough hours — finish more tasks in Study Planner to earn some."); return; }
+      state.placed.push({ id: d.id, c: c, r: r, rot: rotOf(state.rotated) });
+      afterChange();
+    }
+    function removeAt(i) {
+      if (i >= 0 && i < state.placed.length) {
+        state.placed.splice(i, 1);
+        state.picked = null; state.moving = null;      // indexes shift after a splice
+        afterChange();
+      }
+    }
+    // clicking a placed piece selects it; it is not destroyed until you say so
+    function pickPiece(i) {
+      state.picked = (i === state.picked) ? null : i;
+      state.moving = null;
+      if (state.picked !== null) { state.selected = null; state.rotated = false; }
+      afterChange();
+    }
+    function turnPicked() {
+      const it = state.placed[state.picked]; if (!it) return;
+      const next = rotOf(it.rot + 1);
+      const f = fit(it.id, next);
+      if (!canPlace(it.c, it.r, f[0], f[1], state.picked)) { toast("Not enough space to turn it here — move it first."); return; }
+      it.rot = next;
+      afterChange();
+    }
+    function relocate(i, c, r) {
+      const it = state.placed[i]; if (!it) return;
+      const f = fit(it.id, it.rot);
+      if (!canPlace(c, r, f[0], f[1], i)) { toast("It does not fit there."); return; }
+      it.c = c; it.r = r;
+      state.moving = null; state.picked = i;
+      afterChange();
+    }
+    // what the pointer is currently about to drop, whatever the source
+    function dropSpec() {
+      if (carry && carry.from != null) { const it = state.placed[carry.from]; return it ? { id: it.id, rot: it.rot, skip: carry.from } : null; }
+      if (carry) return { id: carry.id, rot: state.rotated, skip: null };
+      if (state.moving != null) { const it = state.placed[state.moving]; return it ? { id: it.id, rot: it.rot, skip: state.moving } : null; }
+      if (state.selected) return { id: state.selected, rot: state.rotated, skip: null };
+      return null;
+    }
+    function skinAction(kind, id) {
+      const set = kind === "floor" ? FLOORS : WALLS;
+      if (state.skinsOwned[kind].indexOf(id) >= 0) { state[kind] = id; afterChange(); return; }
+      if (set[id].cost > budget().available) { toast("Not enough hours for the " + set[id].name + " style."); return; }
+      state.skinsOwned[kind].push(id); state[kind] = id;
+      toast("Unlocked " + set[id].name + " " + kind + "!");
+      afterChange();
+    }
+    function checkAchievements() {
+      const st = { completedTasks };
+      let changed = false;
+      ACHIEVEMENTS.forEach(a => {
+        if (!state.achievements[a.id] && a.test(state, st)) { state.achievements[a.id] = true; changed = true; toast("🏆 Achievement unlocked: " + a.name); }
+      });
+      if (changed) saveGame();
+      renderAchievements();
+    }
+
+    // ===== toast =====
+    let toastT;
+    function toast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg; el.classList.add("show");
+      clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    // ===== modals =====
+    const open = id => document.getElementById(id).classList.add("show");
+    const closeAll = () => document.querySelectorAll(".modal-backdrop").forEach(b => b.classList.remove("show"));
+
+    // ===== chrome: mirror the planner's theme + font ===== 
+    function applyChrome() {
+      let theme = "default", font = "mono";
+      try {
+        theme = localStorage.getItem("sp:theme") || "default";
+        font = localStorage.getItem("sp:font") || "mono";
+      } catch (e) { }
+      document.body.setAttribute("data-theme", theme);
+      document.body.setAttribute("data-font", font);
+    }
+
+    // ===== init =====
+    function wire() {
+      document.getElementById("stage").addEventListener("click", e => {
+        if (swallowClick) { swallowClick = false; return; }   // that was a drag
+        const furni = e.target.closest(".furni");
+        const tile = e.target.closest(".tile");
+        if (state.moving !== null) {                          // armed by the Move button
+          if (furni && +furni.dataset.i === state.moving) { state.moving = null; afterChange(); return; }
+          if (tile) relocate(state.moving, +tile.dataset.c, +tile.dataset.r);
+          return;
+        }
+        if (furni) { pickPiece(+furni.dataset.i); return; }    // select it, offer the options
+        if (!tile) return;
+        if (state.selected) { placeAt(+tile.dataset.c, +tile.dataset.r); return; }
+        if (state.picked !== null) pickPiece(null);            // click bare floor to deselect
+      });
+      document.querySelector(".root").addEventListener("click", e => {
+        const it = e.target.closest(".item"); if (it) { selectItem(it.dataset.item); return; }
+        const sk = e.target.closest(".skin"); if (sk) { const parts = sk.dataset.skin.split(":"); skinAction(parts[0], parts[1]); }
+      });
+      const stage = document.getElementById("stage");
+      const clearPreview = () => stage.querySelectorAll(".tile.ok, .tile.bad").forEach(t => t.classList.remove("ok", "bad"));
+      const PER_PX = (Math.PI * 2) / 520;                 // a full turn per ~520px across
+      let lastX = null, pending = null, raf = 0;
+      const spin = () => { raf = 0; if (pending !== null) { rotateView(pending); pending = null; } };
+
+      function showFootprint(tile) {
+        clearPreview();
+        const spec = dropSpec(); if (!spec) return;
+        const c = +tile.dataset.c, r = +tile.dataset.r, f = fit(spec.id, spec.rot);
+        const ok = canPlace(c, r, f[0], f[1], spec.skip);
+        for (let i = 0; i < f[0]; i++) for (let j = 0; j < f[1]; j++) {
+          const el = stage.querySelector('.tile[data-c="' + (c + i) + '"][data-r="' + (r + j) + '"]');
+          if (el) el.classList.add(ok ? "ok" : "bad");
+        }
+      }
+
+      let spinDrag = null;
+
+      stage.addEventListener("pointermove", e => {
+        if (carry) return;
+        if (spinDrag) {
+          const dx = e.clientX - spinDrag.lastX;
+          spinDrag.lastX = e.clientX;
+          spinDrag.moved += Math.abs(dx);
+          if (dx) {
+            pending = (pending || 0) - dx * PER_PX;
+            if (!raf) raf = requestAnimationFrame(spin);
+          }
+          clearPreview();
+          return;
+        }
+        const tile = e.target.closest(".tile");
+        if (tile) showFootprint(tile); else clearPreview();
+      });
+      stage.addEventListener("pointerleave", () => { clearPreview(); });
+      stage.addEventListener("pointerdown", e => {
+        if (e.button !== undefined && e.button !== 0) return;
+        const furni = e.target.closest(".furni");
+        if (furni) {                                   // kéo món đồ trong phòng
+          carry = { from: +furni.dataset.i, pid: e.pointerId, x0: e.clientX, y0: e.clientY, far: 0, ghost: null, tile: null };
+          return;
+        }
+        spinDrag = { pid: e.pointerId, lastX: e.clientX, moved: 0 };
+        try { stage.setPointerCapture(e.pointerId); } catch (err) { }
+      });
+      const endSpin = () => {
+        if (!spinDrag) return;
+        if (spinDrag.moved > 4) swallowClick = true;   // kéo xoay thì không tính là click đặt đồ
+        try { stage.releasePointerCapture(spinDrag.pid); } catch (err) { }
+        spinDrag = null;
+        saveGame();
+      };
+      window.addEventListener("pointerup", endSpin);
+      window.addEventListener("pointercancel", endSpin);
+      const tileUnder = (x, y) => {
+        const el = document.elementFromPoint(x, y);
+        return el && el.closest ? el.closest(".tile") : null;
+      };
+      const dropCarry = () => {
+        if (!carry) return;
+        if (carry.captured) { try { carry.captured.releasePointerCapture(carry.pid); } catch (err) { } }
+        if (carry.ghost) carry.ghost.remove();
+        document.body.classList.remove("carrying");
+        carry = null;
+        clearPreview();
+      };
+
+      document.getElementById("shopItems").addEventListener("pointerdown", e => {
+        if (e.button !== undefined && e.button !== 0) return;
+        const row = e.target.closest(".item"); if (!row) return;
+        carry = { id: row.dataset.item, pid: e.pointerId, x0: e.clientX, y0: e.clientY, far: 0, ghost: null, tile: null };
+      });
+
+      window.addEventListener("pointermove", e => {
+        if (!carry) return;
+        carry.far = Math.max(carry.far, Math.abs(e.clientX - carry.x0) + Math.abs(e.clientY - carry.y0));
+        if (carry.far > 5 && !carry.ghost) {               // past the slop: it's a drag, not a click
+          if (carry.from != null) {                        // lifting a piece already in the room
+            const it = state.placed[carry.from];
+            if (!it) { carry = null; return; }
+            carry.id = it.id;
+            state.picked = carry.from; state.selected = null; state.moving = null;
+            renderRoom(); renderShop(); renderHint(); renderPieceActions();
+          } else if (state.selected !== carry.id) {        // pulling a new piece off the shelf
+            state.selected = carry.id; state.rotated = false; state.picked = null; state.moving = null;
+            renderShop(); renderHint(); renderPieceActions();
+          }
+          carry.ghost = document.createElement("div");
+          carry.ghost.className = "carry";
+          carry.ghost.innerHTML = pieceIcon(carry.id);
+          document.body.appendChild(carry.ghost);
+          document.body.classList.add("carrying");
+          const host = carry.from != null ? stage : document.getElementById("shopItems");
+          try { host.setPointerCapture(carry.pid); } catch (err) { }   // release outside the window still lands
+          carry.captured = host;
+        }
+        if (!carry.ghost) return;
+        carry.ghost.style.left = e.clientX + "px";
+        carry.ghost.style.top = e.clientY + "px";
+        carry.tile = tileUnder(e.clientX, e.clientY);
+        clearPreview();
+        if (carry.tile) showFootprint(carry.tile);
+      });
+
+      window.addEventListener("pointerup", e => {
+        if (!carry) return;
+        const dragged = !!carry.ghost, from = carry.from;
+        const tile = dragged ? tileUnder(e.clientX, e.clientY) : null;
+        dropCarry();
+        if (!dragged) return;                              // a plain click: the click handler handles it
+        swallowClick = true;                               // ...so the release must not also count as one
+        if (from != null) {
+          if (tile) relocate(from, +tile.dataset.c, +tile.dataset.r);
+          else toast("Dropped outside the room — the piece stayed where it was.");
+        } else if (tile) placeAt(+tile.dataset.c, +tile.dataset.r);
+        else toast("Drop it on a floor tile to place it.");
+      });
+      window.addEventListener("pointercancel", dropCarry);
+      window.addEventListener("blur", dropCarry);         // never leave rotation stuck off
+
+      const NUDGE = Math.PI / 12;                        // 15 degrees per tap
+      document.getElementById("viewLeft").onclick = () => rotateView(-NUDGE);
+      document.getElementById("viewRight").onclick = () => rotateView(NUDGE);
+      document.getElementById("pieceActions").addEventListener("click", e => {
+        const b = e.target.closest("[data-act]"); if (!b) return;
+        const act = b.dataset.act;
+        if (act === "turn") turnPicked();
+        else if (act === "move") { state.moving = state.moving === null ? state.picked : null; afterChange(); }
+        else if (act === "remove") removeAt(state.picked);
+        else pickPiece(null);
+      });
+      document.getElementById("coinBreak").addEventListener("click", e => {
+        const b = e.target.closest("[data-dev]"); if (!b) return;
+        const v = b.dataset.dev;
+        setDev(v === "off" ? null : v === "inf" ? Infinity : parseFloat(v));
+        renderCoinBreak();
+        toast(devBudget === null ? "Sandbox off — back to your real study hours." : "Sandbox budget: " + fmtH(devBudget));
+      });
+      document.getElementById("rotateBtn").onclick = rotateSelection;
+      document.getElementById("navAch").onclick = () => { renderAchievements(); open("achModal"); };
+      document.getElementById("navSettings").onclick = () => { renderCoinBreak(); open("settingsModal"); };
+      document.querySelectorAll("[data-close]").forEach(b => b.onclick = closeAll);
+      document.querySelectorAll(".modal-backdrop").forEach(b => b.addEventListener("click", e => { if (e.target === b) closeAll(); }));
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") {
+          if (carry) { dropCarry(); return; }
+          if (state.moving !== null) { state.moving = null; afterChange(); return; }
+          if (state.picked !== null) { pickPiece(null); return; }
+          closeAll();
+        }
+        if (e.key === "r" || e.key === "R") {
+          if (state.picked !== null && !carry) turnPicked();
+          else rotateSelection();
+          if (carry && carry.tile) { clearPreview(); showFootprint(carry.tile); }
+        }
+        if ((e.key === "Backspace" || e.key === "Delete") && state.picked !== null) { e.preventDefault(); removeAt(state.picked); }
+        if (e.key === "ArrowLeft") rotateView(-Math.PI / 12);
+        if (e.key === "ArrowRight") rotateView(Math.PI / 12);
+      });
+      document.getElementById("refreshBtn").onclick = async () => {
+        absorbPlanner(await readPlanner()); renderAll(); checkAchievements();
+        toast("Synced — " + fmtH(budget().available) + " left to spend.");
+      };
+      document.getElementById("resetAll").onclick = () => {
+        if (confirm("Reset the room, styles and achievements? This cannot be undone.")) {
+          state = { placed: [], floor: "wood", wall: "cream", skinsOwned: { floor: ["wood"], wall: ["cream"] }, achievements: {}, selected: null, rotated: false, picked: null, moving: null };
+          afterChange(); closeAll();
+        }
+      };
+      window.addEventListener("focus", async () => {
+        applyChrome();
+        const before = studyHours + ":" + completedTasks;
+        absorbPlanner(await readPlanner());
+        renderTopStatus();
+        if (before !== studyHours + ":" + completedTasks) { renderAll(); checkAchievements(); }
+      });
+    }
+
+    async function init() {
+      applyChrome();
+      readDevFlag();
+      await loadGame();
+      absorbPlanner(await readPlanner());
+      document.getElementById("clockDate").textContent =
+        new Date().toLocaleDateString("en-US", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" });
+      tickClock();
+      setInterval(tickClock, 1000);
+      setInterval(renderTopStatus, 60000);
+      wire();
+      renderAll();
+      checkAchievements();
+    }
+    init();
+  </script>
+</body>
+
+</html>
