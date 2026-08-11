@@ -321,6 +321,28 @@
       color: var(--muted);
       margin-top: 2px;
     }
+   .navbar {
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+      border: 1px solid var(--line); border-radius: 12px; padding: 12px 18px;
+      background: linear-gradient(135deg, var(--bg-glow), transparent), var(--surface);
+      transition: background .3s ease, border-color .3s ease;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 11px; cursor: pointer; }
+    .nav-mark {
+      width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center;
+      font-size: 20px; background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      box-shadow: 0 0 20px var(--bg-glow);
+    }
+    .nav-title { font-size: 17px; font-weight: 800; letter-spacing: .01em; color: var(--text); }
+    .nav-links { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+    .nav-links a, .nav-links button {
+      font-family: var(--mono); font-size: 12.5px; color: var(--muted);
+      background: none; border: none; border-radius: 8px; padding: 7px 11px;
+      cursor: pointer; text-decoration: none; transition: .12s; white-space: nowrap;
+    }
+    .nav-links a:hover, .nav-links button:hover { color: var(--text); background: var(--surface2); }
+    .nav-links .active { color: var(--cyan); background: var(--surface2); font-weight: 700; }
+    .nav-clock { margin-left: auto; display: flex; align-items: center; gap: 22px; }
 
     .topbar-right {
       display: flex;
@@ -1487,20 +1509,24 @@
 
 <body>
   <div class="root">
-    <header class="topbar">
-      <div class="brand" id="toggleModeBtn" style="cursor: pointer;" title="On/Off Pomodoro">
-        <div class="brand-mark">
-          <svg id="brandIcon" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <nav class="navbar">
+       <div class="nav-brand" id="homeBtn" title="Go back to my room">
+        <span class="nav-mark" style="color:#fff">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" />
             <path d="M4 5.5A2.5 2.5 0 0 0 6.5 8H20" />
           </svg>
-        </div>
-        <div>
-          <div class="brand-name" id="brandName">Study Planner</div>
-        </div>
+        </span>
+        <span class="nav-title">Study Planner</span>
       </div>
-      <div class="topbar-right">
+      <div class="nav-links">
+        <a href="room-game.html">Room</a>
+        <button id="navPlanner" class="active">Study Planner</button>
+        <button id="navPomodoro">Pomodoro</button>
+        <a href="room-game.html">Achievements</a>
+        <button id="navSettings2">Settings</button>
+      </div>
+      <div class="nav-clock">
         <div class="shift">
           <span class="eyebrow">Class</span>
           <span class="shift-val" id="topStatus">—</span>
@@ -1512,7 +1538,7 @@
           <div class="clock-date" id="clockDate"></div>
         </div>
       </div>
-    </header>
+    </nav>
     <div id="mainView" style="display:flex;flex-direction:column;gap:14px">
       <div class="toolbar">
         <button class="btn primary" id="addTaskBtn">＋ Add task to do </button>
@@ -2686,27 +2712,22 @@
       }
     </script>
     <script>
-      const brandToggleBtn = document.getElementById('toggleModeBtn');
-      const mainView = document.getElementById('mainView');
+const mainView = document.getElementById('mainView');
       const pomodoroView = document.getElementById('pomodoroView');
       document.querySelector('.root').appendChild(pomodoroView);
-      let isPomodoroMode = false;
-      const brandName = document.getElementById('brandName');
-      const brandIcon = document.getElementById('brandIcon');
-      const bookSvg = '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" /><path d="M4 5.5A2.5 2.5 0 0 0 6.5 8H20" />';
-      const clockSvg = '<circle cx="12" cy="12" r="8" /><polyline points="12 8 12 12 15 14" />';
-      brandToggleBtn.addEventListener('click', () => {
-        isPomodoroMode = !isPomodoroMode;
-        if (isPomodoroMode) {
-          mainView.style.display = 'none'; pomodoroView.style.display = 'flex';
-          if (brandName) brandName.textContent = 'Pomodoro Mode';
-          if (brandIcon) brandIcon.innerHTML = clockSvg;
-        } else {
-          mainView.style.display = 'flex'; pomodoroView.style.display = 'none';
-          if (brandName) brandName.textContent = 'Study Planner';
-          if (brandIcon) brandIcon.innerHTML = bookSvg;
-        }
-      });
+      function showView(v) {
+        const pomo = (v === 'pomodoro');
+        mainView.style.display = pomo ? 'none' : 'flex';
+        pomodoroView.style.display = pomo ? 'flex' : 'none';
+        document.getElementById('navPlanner').classList.toggle('active', !pomo);
+        document.getElementById('navPomodoro').classList.toggle('active', pomo);
+      }
+      document.getElementById('navPlanner').addEventListener('click', () => showView('planner'));
+      document.getElementById('navPomodoro').addEventListener('click', () => showView('pomodoro'));
+      document.getElementById('homeBtn').addEventListener('click', () => { window.location.href = 'room-game.html'; });
+      var navSettings2 = document.getElementById('navSettings2');
+      if (navSettings2) navSettings2.addEventListener('click', () => { if (typeof openSettingsModal === 'function') openSettingsModal(); });
+      showView(location.hash === '#pomodoro' ? 'pomodoro' : 'planner');
       const pomoTime = document.getElementById('pomoTime');
       const pomoLabel = document.getElementById('pomoLabel');
       const pomoStartBtn = document.getElementById('pomoStartBtn');
