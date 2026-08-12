@@ -226,8 +226,17 @@
     body {
       margin: 0;
       padding: 0;
+    }
+
+    body {
       background: var(--bg);
       transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.no-anim,
+    body.no-anim * {
+      transition: none !important;
+      animation: none !important;
     }
 
     .ic {
@@ -551,8 +560,126 @@
       gap: 10px;
       background: var(--surface2);
       border: 1px solid var(--line-soft);
+      border-left: 3px solid transparent;
       border-radius: 8px;
       padding: 8px 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color .12s, background .12s;
+    }
+
+    .pomo-task-item:hover {
+      border-color: var(--cyan);
+    }
+
+    .pomo-task-item.prio {
+      border-left-color: var(--gold);
+      background: var(--nested);
+    }
+
+    .pomo-body {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pomo-title {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .pomo-task-item.prio .pomo-title {
+      font-weight: 700;
+    }
+
+    .pomo-meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted2);
+    }
+
+    .pomo-done {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--muted);
+      background: none;
+      border: 1px solid var(--line-soft);
+      border-radius: 6px;
+      padding: 4px 8px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: .12s;
+    }
+
+    .pomo-done:hover {
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    .pomo-empty {
+      text-align: center;
+      color: var(--muted2);
+      font-size: 12px;
+      padding: 14px;
+    }
+
+    .pomo-focus {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--gold-2);
+      margin-top: 14px;
+      line-height: 1.4;
+    }
+
+    /* ---- focus lock: toàn màn hình khi vào Pomodoro ---- */
+    .focus-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 40;
+      display: none;
+      align-items: center;
+      gap: 14px;
+      padding: 8px 16px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+
+    .focus-bar b {
+      color: var(--gold-2);
+      font-weight: 700;
+    }
+
+    .focus-bar .spacer {
+      flex: 1;
+    }
+
+    body.focus-lock .focus-bar {
+      display: flex;
+    }
+
+    body.focus-lock .navbar {
+      display: none;
+    }
+
+    body.focus-lock .root {
+      justify-content: center;
+      padding-top: 46px;
+    }
+
+    body.focus-lock #pomodoroView {
+      padding-top: 0;
     }
 
     .pomo-task-item.done span {
@@ -1564,6 +1691,27 @@
 </head>
 
 <body>
+  <script>
+    // Chạy ngay khi <body> vừa tồn tại, TRƯỚC khi trình duyệt vẽ nội dung:
+    // gắn sẵn theme + tắt transition để không thấy cú đổi màu.
+    (function () {
+      try {
+        document.body.setAttribute("data-theme", localStorage.getItem("sp:theme") || "default");
+        document.body.setAttribute("data-font", localStorage.getItem("sp:font") || "mono");
+      } catch (e) { }
+      document.body.classList.add("no-anim");
+      addEventListener("load", function () {
+        requestAnimationFrame(function () { document.body.classList.remove("no-anim"); });
+      });
+    })();
+  </script>
+  <div class="focus-bar" id="focusBar">
+    <span><b>Focus lock</b> · fullscreen</span>
+    <span id="focusHint"></span>
+    <span class="spacer"></span>
+    <button class="btn ghost" id="focusExit">⤺ Timetable</button>
+    <button class="btn ghost" id="focusRoom">🏠 Room</button>
+  </div>
   <div class="root">
     <nav class="navbar">
       <div class="nav-brand" id="homeBtn" title="Go back to my room">
@@ -1600,7 +1748,6 @@
       <div class="toolbar">
         <button class="btn primary" id="addTaskBtn">＋ Add task to do </button>
         <button class="btn" id="addCourseBtn">＋ Subject</button>
-        <button class="btn ghost" id="settingsBtn">⚙️ Settings</button>
         <span class="spacer"></span>
         <button class="btn ghost" id="youtubeBtn"> Go to youtube for music :)</button>
         <input type="file" id="icsInput" accept=".ics,text/calendar" hidden>
@@ -1756,6 +1903,8 @@
             <button class="btn ghost" id="pomoResetBtn" style="border-color:var(--line)">Reset</button>
           </div>
 
+          <div class="pomo-focus" id="pomoFocusLabel" style="display:none"></div>
+          <div id="pomoBudget" style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:12px"></div>
           <div style="border-top:1px solid var(--line-soft);margin-top:22px"></div>
 
           <div
@@ -1775,10 +1924,13 @@
           <div style="margin-bottom:12px">
             <span class="eyebrow">Session Tasks</span>
             <div class="panel-title">Pomodoro To-Do</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:5px;line-height:1.45">
+            </div>
           </div>
           <div style="display:flex;gap:8px">
-            <input id="pomoTaskInput" placeholder="What are you working on?"
-              style="flex:1;min-width:0;background:var(--nested);border:1px solid var(--line-soft);color:var(--text);font-family:var(--sans);font-size:13px;border-radius:8px;padding:9px 11px;outline:none">
+            <input id="pomoTaskInput" placeholder="Add a task (it goes into Study Planner too)" style="flex:1;min-width:0;background:var(--nested);border:1px solid
+            var(--line-soft);color:var(--text);font-family:var(--sans);font-size:13px;border-radius:8px;padding:9px
+            11px;outline:none">
             <button class="btn primary" id="pomoTaskAddBtn">Add</button>
           </div>
           <div id="pomoTaskList" style="display:flex;flex-direction:column;gap:8px;margin-top:12px"></div>
@@ -1829,6 +1981,7 @@
       const PALETTE = ["#C25A2B", "#6F7A34", "#C98A1E", "#A6401E", "#7A5230", "#3F7E79"];
       const SEV = { critical: { c: "#A6401E", bg: "#F3DAC8" }, warning: { c: "#C98A1E", bg: "#F7E7C2" }, info: { c: "#3F7E79", bg: "#F0E2C6" } };
 
+      const DAILY_HOUR_LIMIT = 12;
       const state = { range: "30", sevFilter: "all", query: "", statusFilter: "all", syllabusView: "bars" };
       let data = { courses: [], tasks: [] };
 
@@ -1853,6 +2006,34 @@
         return arr;
       }
       function thisWeekRange() { const ds = weekDates(); return [ymd(ds[0]), ymd(ds[6])]; }
+      function taskDayList(t) {
+        const days = Math.max(1, parseInt(t.days) || 1);
+        if (!t.due) return [];
+        const out = [], d = new Date(t.due + "T00:00:00");
+        d.setDate(d.getDate() - (days - 1));
+        for (let i = 0; i < days; i++) { out.push(ymd(d)); d.setDate(d.getDate() + 1); }
+        return out;
+      }
+      function dayLoad(skipId) {
+        const map = {};
+        data.tasks.forEach(t => {
+          if (t.id === skipId || t.status === "done") return;
+          const h = parseFloat(t.hoursPerDay) || 0; if (h <= 0) return;
+          taskDayList(t).forEach(y => { map[y] = (map[y] || 0) + h; });
+        });
+        return map;
+      }
+      // ngày đầu tiên bị vượt trần, hoặc null nếu ổn
+      function overloadedDay(cand, skipId) {
+        const h = parseFloat(cand.hoursPerDay) || 0; if (h <= 0) return null;
+        const map = dayLoad(skipId);
+        const list = taskDayList(cand);
+        for (let i = 0; i < list.length; i++) {
+          const total = (map[list[i]] || 0) + h;
+          if (total > DAILY_HOUR_LIMIT) return { day: list[i], total: total, other: map[list[i]] || 0 };
+        }
+        return null;
+      }
 
       const IP = {
         book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 5.5A2.5 2.5 0 0 0 6.5 8H20"/>',
@@ -1992,7 +2173,9 @@
           status: t.status || "todo",
           due: t.due || null,
           time: t.time || "",
-          estHours: parseFloat(t.estHours) || 0,
+          days: Math.max(1, parseInt(t.days) || 1),
+          hoursPerDay: Math.min(DAILY_HOUR_LIMIT, parseFloat(t.hoursPerDay) || (parseFloat(t.estHours) || 0)),
+          estHours: Math.max(1, parseInt(t.days) || 1) * Math.min(DAILY_HOUR_LIMIT, parseFloat(t.hoursPerDay) || (parseFloat(t.estHours) || 0)),
           notes: t.notes || "",
           completedAt: t.completedAt || null
         }));
@@ -2376,6 +2559,7 @@
         renderTopStatus(); renderWeekBoard(); renderKpis();
         renderThroughput(); renderByCourse(); renderSubjects();
         renderReminders(); renderTasks();
+        if (typeof renderPomoTasks === "function") renderPomoTasks();
       }
       function cycleStatus(id) {
         const t = taskById(id); if (!t) return;
@@ -2410,9 +2594,32 @@
           + '<div class="field"><label>Status</label><select id="f_status">' + optionTags(TASK_STATUS, t.status) + "</select></div>"
           + '<div class="field"><label>Due Date</label><input type="date" id="f_due" value="' + esc(t.due || "") + '"></div>'
           + '<div class="field"><label>Time</label><input type="time" id="f_time" value="' + esc(t.time || "") + '"></div>'
-          + '<div class="field"><label>Estimated Hours</label><input type="number" min="0" step="0.5" id="f_hours" value="' + esc(t.estHours === 0 ? "0" : (t.estHours || "")) + '"></div>'
+          + '<div class="field"><label>Days Needed</label><input type="number" min="1" step="1" id="f_days" value="' + esc(t.days || 1) + '"></div>'
+          + '<div class="field"><label>Hours / Day (max ' + DAILY_HOUR_LIMIT + ')</label><input type="number" min="0" max="' + DAILY_HOUR_LIMIT + '" step="0.5" id="f_hpd" value="' + esc(t.hoursPerDay === 0 ? "0" : (t.hoursPerDay || "")) + '"></div>'
+          + '<div class="field full"><span id="f_load" style="font-family:var(--mono);font-size:11px;color:var(--muted)"></span>'
+          + '<span id="f_hours_err" style="display:none;font-family:var(--mono);font-size:11px;color:var(--red);margin-top:5px"></span></div>'
           + '<div class="field full"><label>Notes</label><textarea id="f_notes" placeholder="Optional">' + esc(t.notes || "") + "</textarea></div>"
           + "</div>";
+        const refreshLoad = () => {
+          const cand = {
+            due: document.getElementById("f_due").value || null,
+            days: parseInt(document.getElementById("f_days").value) || 1,
+            hoursPerDay: parseFloat(document.getElementById("f_hpd").value) || 0
+          };
+          const el = document.getElementById("f_load"), err = document.getElementById("f_hours_err");
+          el.textContent = "Total " + (cand.days * cand.hoursPerDay) + "h over " + cand.days + " day(s)"
+            + (cand.due ? " · ends on the due date" : " · set a due date to reserve the days");
+          let msg = "";
+          if (cand.hoursPerDay > DAILY_HOUR_LIMIT) msg = "Max " + DAILY_HOUR_LIMIT + " hours per day.";
+          else {
+            const bad = overloadedDay(cand, editing ? t.id : null);
+            if (bad) msg = fmtDate(bad.day) + " would reach " + bad.total + "h — " + bad.other + "h is already booked, limit is " + DAILY_HOUR_LIMIT + "h/day.";
+          }
+          err.textContent = msg;
+          err.style.display = msg ? "block" : "none";
+        };
+        ["f_days", "f_hpd", "f_due"].forEach(id => { const el = document.getElementById(id); if (el) el.oninput = refreshLoad; });
+        refreshLoad();
         const del = document.getElementById("modalDelete");
         del.style.display = editing ? "inline-flex" : "none";
         del.onclick = editing ? () => { if (confirm("Delete this task?")) { deleteTask(t.id); hideModal(); } } : null;
@@ -2772,19 +2979,116 @@
       const mainView = document.getElementById('mainView');
       const pomodoroView = document.getElementById('pomodoroView');
       document.querySelector('.root').appendChild(pomodoroView);
+
+      // ===== Focus lock =====
+      // Trang web KHÔNG chặn được phím hệ điều hành (Cmd+Tab, Ctrl+←→, Alt+Tab) — và đó
+      // chính là lối thoát ta muốn giữ. Cái chặn được là phím của trình duyệt, nhờ
+      // Fullscreen API + Keyboard Lock API (Chrome/Edge, cần https hoặc localhost).
+      const isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+      let focusLock = false;
+      const fsOn = () => !!(document.fullscreenElement || document.webkitFullscreenElement);
+
+      function requestFS() {
+        const el = document.documentElement;
+        const fn = el.requestFullscreen || el.webkitRequestFullscreen;
+        if (!fn) return Promise.resolve();
+        try { return Promise.resolve(fn.call(el, { navigationUI: "hide" })).catch(() => { }); }
+        catch (e) { return Promise.resolve(); }
+      }
+      function exitFS() {
+        const fn = document.exitFullscreen || document.webkitExitFullscreen;
+        if (fsOn() && fn) { try { fn.call(document); } catch (e) { } }
+      }
+      async function lockKeys() { try { if (navigator.keyboard && navigator.keyboard.lock) await navigator.keyboard.lock(); } catch (e) { } }
+      function unlockKeys() { try { if (navigator.keyboard && navigator.keyboard.unlock) navigator.keyboard.unlock(); } catch (e) { } }
+
+      function renderFocusBar() {
+        document.body.classList.toggle("focus-lock", focusLock);
+        const hint = document.getElementById("focusHint");
+        if (hint) hint.textContent = isMac
+          ? "Switch away with ⌘+Tab or Ctrl +←/→ · press Esc to leave"
+          : "Switch away with Alt+Tab or Ctrl+Shift+←/→ · press Esc to leave";
+      }
+      async function enterFocusLock(gesture) {
+        if (gesture && !fsOn()) await requestFS();
+        if (!fsOn()) { renderFocusBar(); return false; }   // trình duyệt từ chối -> vẫn dùng bình thường
+        await lockKeys();
+        focusLock = true;
+        renderFocusBar();
+        return true;
+      }
+      const ROOM_FILE = "index.html";
+      function leaveFocusLock(dest) {
+        focusLock = false;
+        unlockKeys();
+        exitFS();
+        renderFocusBar();
+        if (dest === "room") { window.location.href = ROOM_FILE; return; }
+        showView("planner");            // mặc định: về lại timetable
+      }
+      let pendingFocus = false;
+      function armPendingFocus() {
+        if (pendingFocus) return;
+        pendingFocus = true;
+        const go = () => {
+          document.removeEventListener("pointerdown", go, true);
+          document.removeEventListener("keydown", go, true);
+          pendingFocus = false;
+          if (pomodoroView.style.display !== "none") enterFocusLock(true);
+        };
+        document.addEventListener("pointerdown", go, true);
+        document.addEventListener("keydown", go, true);
+      }
+      // lối thoát của hệ điều hành: không bao giờ chặn
+      function isEscapeHatch(e) {
+        if (e.key === "Tab" && (e.metaKey || e.altKey)) return true;
+        if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && e.ctrlKey) return true;
+        return false;
+      }
+      function shouldBlock(e) {
+        if (!focusLock || isEscapeHatch(e)) return false;
+        if (!(e.metaKey || e.ctrlKey)) return false;
+        const k = (e.key || "").toLowerCase();
+        if (k === "tab") return true;
+        if (/^[0-9]$/.test(k)) return true;
+        if (["t", "n", "w", "p", "[", "]"].indexOf(k) >= 0) return true;
+        if (e.metaKey && (k === "arrowleft" || k === "arrowright")) return true;
+        if (k === "pageup" || k === "pagedown") return true;
+        return false;
+      }
+      document.addEventListener("keydown", e => {
+        if (focusLock && e.key === "Escape") {
+          if (modalEl().classList.contains("show")) return;
+          e.preventDefault();                                 // chặn hành vi "giữ Esc" của trình duyệt
+          leaveFocusLock("planner");                               // một lần Esc là ra
+          return;
+        }
+        if (shouldBlock(e)) e.preventDefault();
+      }, true);
+      document.addEventListener("fullscreenchange", () => {
+        if (focusLock && !fsOn()) { focusLock = false; unlockKeys(); renderFocusBar(); showView("planner"); }
+      });
+      document.getElementById("focusExit").addEventListener("click", () => leaveFocusLock("planner"));
+      document.getElementById("focusRoom").addEventListener("click", () => leaveFocusLock("room"));
+
       function showView(v) {
         const pomo = (v === 'pomodoro');
         mainView.style.display = pomo ? 'none' : 'flex';
         pomodoroView.style.display = pomo ? 'flex' : 'none';
         document.getElementById('navPlanner').classList.toggle('active', !pomo);
         document.getElementById('navPomodoro').classList.toggle('active', pomo);
+        if (!pomo && focusLock) { focusLock = false; unlockKeys(); exitFS(); renderFocusBar(); }
       }
       document.getElementById('navPlanner').addEventListener('click', () => showView('planner'));
-      document.getElementById('navPomodoro').addEventListener('click', () => showView('pomodoro'));
+      document.getElementById('navPomodoro').addEventListener('click', () => {
+        showView('pomodoro');
+        enterFocusLock(true);
+      });
       document.getElementById('homeBtn').addEventListener('click', () => { window.location.href = 'index.html'; });
       var navSettings2 = document.getElementById('navSettings2');
       if (navSettings2) navSettings2.addEventListener('click', () => { if (typeof openSettingsModal === 'function') openSettingsModal(); });
-      showView(location.hash === '#pomodoro' ? 'pomodoro' : 'planner');
+      if (location.hash === '#pomodoro') { showView('pomodoro'); armPendingFocus(); }
+      else showView('planner');
       const pomoTime = document.getElementById('pomoTime');
       const pomoLabel = document.getElementById('pomoLabel');
       const pomoStartBtn = document.getElementById('pomoStartBtn');
@@ -2793,6 +3097,30 @@
       const pomoWorkInput = document.getElementById('pomoWorkInput');
       const pomoRestInput = document.getElementById('pomoRestInput');
       let pomoTimer = null, pomoTimeLeft = 25 * 60, isPomoRunning = false, isWorkSession = true;
+
+      // ---- trần thời gian tập trung mỗi ngày ----
+      const POMO_USED_KEY = "sp:pomoUsed", POMO_LIMIT_SEC = DAILY_HOUR_LIMIT * 3600;
+      function pomoUsed() {
+        let o = null;
+        try { o = JSON.parse(localStorage.getItem(POMO_USED_KEY) || "null"); } catch (e) { }
+        const today = ymd(new Date());
+        if (!o || o.date !== today) o = { date: today, sec: 0 };   // sang ngày mới là reset
+        return o;
+      }
+      function addPomoUsed(sec) {
+        const o = pomoUsed(); o.sec += sec;
+        try { localStorage.setItem(POMO_USED_KEY, JSON.stringify(o)); } catch (e) { }
+        renderPomoBudget();
+        return o;
+      }
+      function renderPomoBudget() {
+        const el = document.getElementById("pomoBudget"); if (!el) return;
+        const used = pomoUsed().sec / 3600;
+        const left = Math.max(0, DAILY_HOUR_LIMIT - used);
+        el.textContent = "Focus time today: " + (Math.round(used * 10) / 10) + "h / " + DAILY_HOUR_LIMIT + "h"
+          + (left <= 0 ? " — daily limit reached, go rest." : " · " + (Math.round(left * 10) / 10) + "h left");
+        el.style.color = left <= 0 ? "var(--red)" : "var(--muted)";
+      }
       function updatePomoDisplay() {
         const m = Math.floor(pomoTimeLeft / 60), s = pomoTimeLeft % 60;
         pomoTime.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
@@ -2807,8 +3135,20 @@
       }
       pomoStartBtn.addEventListener('click', () => {
         if (isPomoRunning) return;
+        if (pomoUsed().sec >= POMO_LIMIT_SEC) {
+          alert("You have already focused " + DAILY_HOUR_LIMIT + " hours today. Give it a rest — the timer unlocks again tomorrow.");
+          return;
+        }
         isPomoRunning = true;
         pomoTimer = setInterval(() => {
+          if (isWorkSession) {
+            const o = addPomoUsed(1);
+            if (o.sec >= POMO_LIMIT_SEC) {
+              clearInterval(pomoTimer); isPomoRunning = false;
+              alert("That is " + DAILY_HOUR_LIMIT + " hours of focus today. Timer stopped — go take a proper break.");
+              return;
+            }
+          }
           if (pomoTimeLeft > 0) { pomoTimeLeft--; updatePomoDisplay(); }
           else {
             clearInterval(pomoTimer); isPomoRunning = false;
@@ -2838,24 +3178,77 @@
           }
         });
       });
+      // ===== Pomodoro to-do: cùng một nguồn dữ liệu với Study Planner =====
       const pomoTaskInput = document.getElementById('pomoTaskInput');
       const pomoTaskAddBtn = document.getElementById('pomoTaskAddBtn');
       const pomoTaskList = document.getElementById('pomoTaskList');
+
+      const POMO_FOCUS_KEY = "sp:pomoFocus";
+      let pomoFocus = [];
+      try { pomoFocus = JSON.parse(localStorage.getItem(POMO_FOCUS_KEY) || "[]"); } catch (e) { pomoFocus = []; }
+      if (!Array.isArray(pomoFocus)) pomoFocus = [];
+
+      function savePomoFocus() {
+        try { localStorage.setItem(POMO_FOCUS_KEY, JSON.stringify(pomoFocus)); } catch (e) { }
+      }
+      const isFocus = id => pomoFocus.indexOf(id) >= 0;
+
+      function togglePomoFocus(id) {
+        const i = pomoFocus.indexOf(id);
+        if (i >= 0) pomoFocus.splice(i, 1); else pomoFocus.push(id);
+        savePomoFocus();
+        renderPomoTasks();
+        renderPomoBudget();
+      }
+      function pomoMarkDone(id) {
+        const t = data.tasks.find(x => x.id === id); if (!t) return;
+        t.status = "done";
+        t.completedAt = ymd(new Date());
+        const i = pomoFocus.indexOf(id); if (i >= 0) { pomoFocus.splice(i, 1); savePomoFocus(); }
+        saveData(); renderAll();
+      }
+      function renderPomoTasks() {
+        const list = document.getElementById("pomoTaskList"); if (!list) return;
+        const open = data.tasks.filter(t => t.status !== "done");
+        open.sort((a, b) => {                       // việc đã tick lên trước, rồi tới hạn nộp gần nhất
+          const fa = isFocus(a.id) ? 0 : 1, fb = isFocus(b.id) ? 0 : 1;
+          if (fa !== fb) return fa - fb;
+          const av = a.due || "9999", bv = b.due || "9999";
+          return av < bv ? -1 : av > bv ? 1 : 0;
+        });
+        list.innerHTML = open.length ? open.map(t => {
+          const c = courseById(t.courseId);
+          const meta = (c ? esc(c.code || c.name) + " · " : "") + typeLabel(t.type) + (t.due ? " · due " + fmtDate(t.due) : "");
+          return '<div class="pomo-task-item' + (isFocus(t.id) ? " prio" : "") + '" data-id="' + t.id + '" title="Click to prioritise">'
+            + '<input type="checkbox" class="pomo-prio"' + (isFocus(t.id) ? " checked" : "") + '>'
+            + '<span class="pomo-body"><span class="pomo-title">' + esc(t.title) + '</span>'
+            + '<span class="pomo-meta">' + meta + '</span></span>'
+            + '<button class="pomo-done" title="Mark as done in Study Planner">✓ Done</button></div>';
+        }).join("") : '<div class="pomo-empty">No open tasks — add one above, or over in Study Planner.</div>';
+        const focused = open.filter(t => isFocus(t.id));
+        const fl = document.getElementById("pomoFocusLabel");
+        if (fl) {
+          fl.textContent = focused.length ? ("Working on: " + focused.map(t => t.title).join(" · ")) : "";
+          fl.style.display = focused.length ? "block" : "none";
+        }
+      }
+      pomoTaskList.addEventListener("click", e => {
+        const row = e.target.closest(".pomo-task-item"); if (!row) return;
+        if (e.target.closest(".pomo-done")) { pomoMarkDone(row.dataset.id); return; }
+        togglePomoFocus(row.dataset.id);
+      });
       function addPomoTask(text) {
-        if (!text.trim()) return;
-        const div = document.createElement('div'); div.className = 'pomo-task-item';
-        const cb = document.createElement('input'); cb.type = 'checkbox';
-        cb.addEventListener('change', () => div.classList.toggle('done', cb.checked));
-        const span = document.createElement('span'); span.textContent = text;
-        span.style.fontFamily = 'var(--sans)'; span.style.fontSize = '13.5px'; span.style.flex = '1';
-        const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = '&times;';
-        del.style.background = 'none'; del.style.border = 'none'; del.style.cursor = 'pointer';
-        del.addEventListener('click', () => div.remove());
-        div.appendChild(cb); div.appendChild(span); div.appendChild(del);
-        pomoTaskList.appendChild(div); pomoTaskInput.value = '';
+        const title = (text || "").trim(); if (!title) return;
+        data.tasks.push({
+          id: uid("t"), title: title, courseId: null, type: "study", status: "todo",
+          due: null, time: "", estHours: 0, notes: "", completedAt: null
+        });
+        pomoTaskInput.value = '';
+        saveData(); renderAll();
       }
       pomoTaskAddBtn.addEventListener('click', () => addPomoTask(pomoTaskInput.value));
       pomoTaskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addPomoTask(pomoTaskInput.value); });
+      renderPomoTasks();
     </script>
 </body>
 

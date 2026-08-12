@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Room</title>
   <style>
-    /* ---- tokens: identical set to Study Planner so both files scale the same ---- */
     :root {
       --bg: #F4F5F7;
       --bg-glow: rgba(0, 82, 204, 0.04);
@@ -225,8 +224,17 @@
     body {
       margin: 0;
       padding: 0;
+    }
+
+    body {
       background: var(--bg);
       transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.no-anim,
+    body.no-anim * {
+      transition: none !important;
+      animation: none !important;
     }
 
     /* ---- shell: same padding, gap and rhythm as the planner ---- */
@@ -253,7 +261,7 @@
       flex-wrap: wrap;
       border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 14px 18px;
+      padding: 12px 18px;
       background: linear-gradient(135deg, var(--bg-glow), transparent), var(--surface);
       transition: background 0.3s ease, border-color 0.3s ease;
     }
@@ -261,16 +269,16 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 13px;
+      gap: 11px;
     }
 
     .brand-mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 11px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
       display: grid;
       place-items: center;
-      font-size: 21px;
+      font-size: 20px;
       color: var(--text-on-primary);
       background: linear-gradient(135deg, var(--gold), var(--gold-2));
       box-shadow: 0 0 20px var(--bg-glow);
@@ -278,7 +286,7 @@
 
     .brand-name {
       font-size: 17px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: .01em;
     }
 
@@ -1211,6 +1219,18 @@
 </head>
 
 <body>
+  <script>
+    (function () {
+      try {
+        document.body.setAttribute("data-theme", localStorage.getItem("sp:theme") || "default");
+        document.body.setAttribute("data-font", localStorage.getItem("sp:font") || "mono");
+      } catch (e) { }
+      document.body.classList.add("no-anim");
+      addEventListener("load", function () {
+        requestAnimationFrame(function () { document.body.classList.remove("no-anim"); });
+      });
+    })();
+  </script>
   <div class="root">
     <header class="topbar">
       <div class="brand">
@@ -2256,9 +2276,6 @@
           + '<div class="caution" style="margin-top:0"><b>How the budget works:</b> your balance is the '
           + '<b>estimated hours</b> of every task marked <b>Done</b> in Study Planner, plus a small starter bonus. '
           + 'Furniture and room styles cost hours, and removing a piece refunds it \u2014 rearranging is free.</div>'
-          + '<div class="caution"><b>Storage:</b> the two pages share data only when opened from the same address. '
-          + 'Serve the folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000/</code>; '
-          + 'opened straight as a <code>file://</code> they may not share storage.</div>';
       }
       document.getElementById("settingsPane").innerHTML = h;
     }
@@ -2279,7 +2296,7 @@
       if (yaw < 0) yaw += TAU;
       renderRoom();
       clearTimeout(yawSaveT);
-      yawSaveT = setTimeout(saveGame, 400);          // don't hammer storage while dragging
+      yawSaveT = setTimeout(saveGame, 400);
     }
     function rotateSelection() {
       if (!state.selected) return;
