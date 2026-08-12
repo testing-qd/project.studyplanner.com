@@ -1,0 +1,2862 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study Planner</title>
+  <style>
+    :root {
+      --bg: #F4F5F7;
+      --bg-glow: rgba(0, 82, 204, 0.04);
+      --surface: #FFFFFF;
+      --surface2: #EBECF0;
+      --nested: #DFE1E6;
+      --line: #C1C7D0;
+      --line-soft: #DFE1E6;
+      --text: #172B4D;
+      --text-on-primary: #FFFFFF;
+      --muted: #5E6C84;
+      --muted2: #8993A4;
+      --gold: #0052CC;
+      --gold-2: #0747A6;
+      --amber: #FFAB00;
+      --cyan: #00B8D9;
+      --green: #36B37E;
+      --red: #FF5630;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+    }
+
+    body[data-theme="dark"] {
+      --bg: #1E1A17;
+      --bg-glow: rgba(206, 142, 28, 0.05);
+      --surface: #29241E;
+      --surface2: #332D26;
+      --nested: #231E18;
+      --line: #453B31;
+      --line-soft: #383028;
+      --text: #EFE3C6;
+      --text-on-primary: #1E1A17;
+      --muted: #A78F6C;
+      --muted2: #8A6E4E;
+      --gold: #A9691A;
+      --gold-2: #CE8E1C;
+      --amber: #D9A94F;
+      --cyan: #E7C9A6;
+      --green: #839144;
+      --red: #C25A2B;
+    }
+
+    body[data-theme="matcha"] {
+      --bg: #E8EDE4;
+      --bg-glow: rgba(111, 122, 52, 0.10);
+      --surface: #F3F6F1;
+      --surface2: #EAF0E8;
+      --nested: #DEE6DA;
+      --line: #B5C6AD;
+      --line-soft: #C9D6C3;
+      --text: #2A3622;
+      --text-on-primary: #F3F6F1;
+      --muted: #627958;
+      --muted2: #8A9D82;
+      --gold: #6F7A34;
+      --gold-2: #515B22;
+      --amber: #8B993D;
+      --cyan: #3F7E79;
+      --green: #4A6337;
+      --red: #A6401E;
+    }
+
+    body[data-theme="sakura"] {
+      --bg: #F9F0F2;
+      --bg-glow: rgba(193, 107, 134, 0.08);
+      --surface: #FCFAFB;
+      --surface2: #F4E8EA;
+      --nested: #EBD9DD;
+      --line: #DDBDC4;
+      --line-soft: #E6CED3;
+      --text: #4A2B32;
+      --text-on-primary: #FCFAFB;
+      --muted: #9F6B78;
+      --muted2: #B38692;
+      --gold: #C16B86;
+      --gold-2: #9F546C;
+      --amber: #D489A1;
+      --cyan: #846B9F;
+      --green: #8CA37A;
+      --red: #C25A6E;
+    }
+
+    body[data-theme="ocean"] {
+      --bg: #E3F2FD;
+      --bg-glow: rgba(33, 150, 243, 0.08);
+      --surface: #F5FAFF;
+      --surface2: #EBF4FC;
+      --nested: #DCEAF7;
+      --line: #BBDEFB;
+      --line-soft: #D0E7FA;
+      --text: #0D2A4C;
+      --text-on-primary: #FFFFFF;
+      --muted: #4A6E94;
+      --muted2: #7093B8;
+      --gold: #1976D2;
+      --gold-2: #1565C0;
+      --amber: #F57C00;
+      --cyan: #0097A7;
+      --green: #388E3C;
+      --red: #D32F2F;
+    }
+
+    body[data-theme="sunset"] {
+      --bg: #FDF2E9;
+      --bg-glow: rgba(230, 81, 0, 0.08);
+      --surface: #FFFCFA;
+      --surface2: #FCEBE1;
+      --nested: #F7DFD2;
+      --line: #F0D4C3;
+      --line-soft: #F5E2D7;
+      --text: #4A2012;
+      --text-on-primary: #FFFFFF;
+      --muted: #824B36;
+      --muted2: #A66E58;
+      --gold: #E65100;
+      --gold-2: #BF360C;
+      --amber: #F57F17;
+      --cyan: #0277BD;
+      --green: #2E7D32;
+      --red: #C62828;
+    }
+
+    body[data-theme="lavender"] {
+      --bg: #F3E5F5;
+      --bg-glow: rgba(156, 39, 176, 0.08);
+      --surface: #FCFAFD;
+      --surface2: #F0E1F4;
+      --nested: #E9D2EF;
+      --line: #D7C2DF;
+      --line-soft: #E4D2EB;
+      --text: #311B3B;
+      --text-on-primary: #FFFFFF;
+      --muted: #6A4A7A;
+      --muted2: #926FA3;
+      --gold: #8E24AA;
+      --gold-2: #6A1B9A;
+      --amber: #F57F17;
+      --cyan: #00838F;
+      --green: #2E7D32;
+      --red: #C62828;
+    }
+
+    body[data-theme="forest"] {
+      --bg: #E8F5E9;
+      --bg-glow: rgba(56, 142, 60, 0.08);
+      --surface: #F4FBF5;
+      --surface2: #E0F0E3;
+      --nested: #D2E8D6;
+      --line: #C2DBCA;
+      --line-soft: #D4E8DC;
+      --text: #1B3B22;
+      --text-on-primary: #FFFFFF;
+      --muted: #426B4A;
+      --muted2: #65946F;
+      --gold: #2E7D32;
+      --gold-2: #1B5E20;
+      --amber: #F57F17;
+      --cyan: #00695C;
+      --green: #558B2F;
+      --red: #C62828;
+    }
+
+    body[data-theme="warm beige"] {
+      --bg: #F2E6CC;
+      --bg-glow: rgba(194, 90, 43, 0.10);
+      --surface: #FCF7EA;
+      --surface2: #F7EFD9;
+      --nested: #EFE3C6;
+      --line: #DAC69C;
+      --line-soft: #EADCBB;
+      --text: #3E2C18;
+      --text-on-primary: #3E2C18;
+      --muted: #8A6E4E;
+      --muted2: #A78F6C;
+      --gold: #CE8E1C;
+      --gold-2: #A9691A;
+      --amber: #C98A1E;
+      --cyan: #C25A2B;
+      --green: #6F7A34;
+      --red: #A6401E;
+      --violet: #7A5230;
+      --brown: #6E4A2A;
+    }
+
+    body[data-theme="contrast"] {
+      --bg: #000000;
+      --bg-glow: rgba(255, 255, 255, 0.15);
+      --surface: #111111;
+      --surface2: #222222;
+      --nested: #1A1A1A;
+      --line: #555555;
+      --line-soft: #333333;
+      --text: #FFFFFF;
+      --text-on-primary: #000000;
+      --muted: #CCCCCC;
+      --muted2: #999999;
+      --gold: #FFFF00;
+      --gold-2: #FFCC00;
+      --amber: #FF9900;
+      --cyan: #00FFFF;
+      --green: #00FF00;
+      --red: #FF3333;
+    }
+
+    body[data-font="sans"] {
+      --mono: var(--sans);
+    }
+
+    body[data-font="serif"] {
+      --mono: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .ic {
+      flex-shrink: 0;
+      vertical-align: middle;
+    }
+
+    .root {
+      background: radial-gradient(1100px 560px at 12% -12%, var(--bg-glow) 0%, transparent 55%), var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      min-height: 100vh;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--muted2);
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line-soft);
+      border-radius: 12px;
+      padding: 16px;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-top: 3px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 18px;
+      background: linear-gradient(135deg, var(--bg-glow), transparent), var(--surface);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      color: var(--text-on-primary);
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      box-shadow: 0 0 20px var(--bg-glow);
+    }
+
+    .brand-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, var(--bg-glow), transparent), var(--surface);
+      transition: background .3s ease, border-color .3s ease;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      cursor: pointer;
+    }
+
+    .nav-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      box-shadow: 0 0 20px var(--bg-glow);
+    }
+
+    .nav-title {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: .01em;
+      color: var(--text);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .nav-links a,
+    .nav-links button {
+      font-family: var(--mono);
+      font-size: 12.5px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 11px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: .12s;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover,
+    .nav-links button:hover {
+      color: var(--text);
+      background: var(--surface2);
+    }
+
+    .nav-links .active {
+      color: var(--cyan);
+      background: var(--surface2);
+      font-weight: 700;
+    }
+
+    .nav-clock {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .shift {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      text-align: right;
+      max-width: 320px;
+    }
+
+    .shift-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .clock {
+      text-align: right;
+    }
+
+    .live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--green);
+      font-family: var(--mono);
+      letter-spacing: .05em;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    .clock-time {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      line-height: 1.15;
+    }
+
+    .clock-date {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: capitalize;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .35;
+      }
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      background: var(--surface2);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: border-color .12s, color .12s, background .12s;
+    }
+
+    .btn:hover {
+      border-color: var(--cyan);
+      color: var(--text);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      color: var(--text-on-primary);
+      border: none;
+      font-weight: 600;
+    }
+
+    .btn.primary:hover {
+      filter: brightness(1.06);
+      color: var(--text-on-primary);
+    }
+
+    .btn.ghost {
+      background: transparent;
+    }
+
+    .btn.danger {
+      color: var(--red);
+      border-color: var(--line-soft);
+    }
+
+    .btn.danger:hover {
+      background: var(--bg-glow);
+      color: var(--red);
+    }
+
+    .settings-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .settings-actions .btn {
+      justify-content: center;
+    }
+
+    .storage-status {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted2);
+      margin: -4px 2px 2px;
+      min-height: 14px;
+    }
+
+    .storage-status.warn {
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    .pomo-task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+
+    .pomo-task-item.done span {
+      text-decoration: line-through;
+      color: var(--muted2);
+    }
+
+    .pomo-task-item .del-btn {
+      color: var(--muted2);
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .pomo-task-item .del-btn:hover {
+      color: var(--red);
+    }
+
+    .spacer {
+      flex: 1;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      color: var(--muted2);
+      cursor: pointer;
+      padding: 4px;
+      display: inline-flex;
+      border-radius: 6px;
+      transition: .12s;
+    }
+
+    .icon-btn:hover {
+      color: var(--cyan);
+      background: var(--surface2);
+    }
+
+    .icon-btn.danger:hover {
+      color: var(--red);
+    }
+
+    .board {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .board-legend {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted2);
+      font-family: var(--mono);
+    }
+
+    .berths {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .berth {
+      flex: 1 0 176px;
+      min-width: 176px;
+      border-radius: 10px;
+      padding: 11px 12px;
+      position: relative;
+      background: var(--surface2);
+      border: 1px solid var(--line-soft);
+      border-top: 2px solid var(--line);
+      transition: transform .15s, box-shadow .15s, background .3s;
+    }
+
+    .berth.today {
+      border-top: 2px solid var(--gold);
+      box-shadow: inset 0 0 0 1px var(--gold);
+    }
+
+    .berth:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.1);
+    }
+
+    .berth-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .berth-id {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .05em;
+    }
+
+    .berth-type {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      border: 1px solid var(--line-soft);
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: .08em;
+    }
+
+    .berth-vessel {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12.5px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .berth-place {
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.3;
+      min-height: 26px;
+    }
+
+    .berth-prog {
+      height: 4px;
+      background: var(--line-soft);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .berth-prog span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+    }
+
+    .berth-deadline {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted2);
+      margin-top: 6px;
+    }
+
+    .waterline {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--line), var(--gold), var(--line));
+      opacity: .6;
+    }
+
+    .tt-scroll {
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    .tt-inner {
+      min-width: 700px;
+      resize: horizontal;
+      overflow: hidden;
+      padding-bottom: 8px;
+    }
+
+    .tt-head {
+      display: grid;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tt-dayh {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      padding: 6px 8px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: .04em;
+      border-left: 1px solid var(--line-soft);
+    }
+
+    .tt-dayh span {
+      font-size: 9px;
+      font-weight: 500;
+      color: var(--muted2);
+      letter-spacing: 0;
+    }
+
+    .tt-dayh.today {
+      color: var(--gold-2);
+      background: var(--bg-glow);
+    }
+
+    .tt-body {
+      display: grid;
+    }
+
+    .tt-gutter {
+      position: relative;
+    }
+
+    .tt-hr {
+      position: absolute;
+      right: 7px;
+      font-family: var(--mono);
+      font-size: 9.5px;
+      color: var(--muted2);
+      white-space: nowrap;
+      transform: translateY(-1px);
+    }
+
+    .tt-col {
+      position: relative;
+      cursor: cell;
+      border-left: 1px solid var(--line-soft);
+      background-image: linear-gradient(to bottom, var(--line-soft) 1px, transparent 1px);
+      background-repeat: repeat-y;
+    }
+
+    .tt-col.today {
+      background-color: var(--bg-glow);
+    }
+
+    .tt-block {
+      position: absolute;
+      box-sizing: border-box;
+      border-radius: 6px;
+      padding: 4px 6px;
+      overflow: hidden;
+      font-family: var(--mono);
+      cursor: pointer;
+      transition: filter .12s, box-shadow .12s;
+    }
+
+    .tt-block:hover {
+      filter: brightness(0.96);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .tt-bc {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .tt-bn {
+      font-weight: 400;
+      color: var(--muted);
+    }
+
+    .tt-bt {
+      font-size: 9.5px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    .tt-bl {
+      font-size: 9px;
+      color: var(--muted2);
+      margin-top: 2px;
+      line-height: 1.25;
+    }
+
+    .tt-now {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--red);
+      z-index: 3;
+    }
+
+    .tt-now::before {
+      content: "";
+      position: absolute;
+      left: -3px;
+      top: -2px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--red);
+    }
+
+    .grid-kpi {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+
+    .kpi {
+      padding: 14px 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kpi-val {
+      font-family: var(--mono);
+      font-size: 30px;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: -0.01em;
+    }
+
+    .kpi-unit {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    .kpi-foot {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-top: 2px;
+    }
+
+    .kpi-sub {
+      font-size: 10.5px;
+      color: var(--muted2);
+      line-height: 1.3;
+    }
+
+    .kpi.hse {
+      border-color: var(--gold);
+      background: linear-gradient(180deg, var(--surface2), var(--surface));
+    }
+
+    .hse-val {
+      color: var(--amber);
+    }
+
+    .hse-bar {
+      height: 4px;
+      background: var(--line-soft);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .hse-bar span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--amber), var(--gold));
+    }
+
+    .cols-2 {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 14px;
+    }
+
+    .seg {
+      display: inline-flex;
+      background: var(--nested);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .seg button {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      background: none;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      letter-spacing: .03em;
+      transition: all .12s;
+    }
+
+    .seg button:hover {
+      color: var(--text);
+    }
+
+    .seg button.on {
+      background: var(--surface2);
+      color: var(--cyan);
+    }
+
+    .seg.small button {
+      padding: 4px 8px;
+      font-size: 10px;
+    }
+
+    .seg.small b {
+      color: inherit;
+      opacity: .85;
+      margin-left: 2px;
+    }
+
+    .chart-wrap {
+      margin: 0 -4px;
+      min-height: 230px;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 18px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: var(--mono);
+    }
+
+    .chart-legend i {
+      width: 11px;
+      height: 3px;
+      border-radius: 2px;
+      display: inline-block;
+      margin-right: 6px;
+      vertical-align: 2px;
+    }
+
+    .chart-legend i.dash {
+      height: 2px;
+    }
+
+    .pill-muted {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--line-soft);
+      padding: 3px 9px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .yard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .yard-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      column-gap: 12px;
+      row-gap: 6px;
+    }
+
+    .yard-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+
+    .yard-name {
+      font-size: 13px;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .row-actions {
+      display: inline-flex;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .yard-code {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted2);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .yard-track {
+      height: 7px;
+      background: var(--line-soft);
+      border-radius: 4px;
+      overflow: hidden;
+      grid-column: 1;
+    }
+
+    .yard-fill {
+      display: block;
+      height: 100%;
+      border-radius: 4px;
+      transition: width .4s;
+    }
+
+    .yard-pct {
+      grid-column: 2;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 34px;
+      text-align: right;
+    }
+
+    .fleet {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .donut-wrap {
+      position: relative;
+    }
+
+    #donut {
+      display: flex;
+      justify-content: center;
+    }
+
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .donut-num {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .donut-lbl {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .fleet-types {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ft-row {
+      display: grid;
+      grid-template-columns: 16px 1fr 70px 40px;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ft-name {
+      font-size: 12px;
+    }
+
+    .ft-track {
+      height: 5px;
+      background: var(--line-soft);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .ft-track span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+    }
+
+    .ft-count {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .alerts {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .alert {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      background: var(--surface2);
+      border: 1px solid var(--line-soft);
+      border-left: 3px solid;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .alert-ic {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .alert-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .alert-title {
+      font-size: 12.5px;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+
+    .alert-meta {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--muted2);
+      margin-top: 2px;
+    }
+
+    .alert-time {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted2);
+      font-size: 12px;
+      padding: 18px;
+    }
+
+    .tools {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .searchbox {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--nested);
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      padding: 6px 10px;
+      color: var(--muted);
+    }
+
+    .searchbox input {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 12px;
+      font-family: var(--mono);
+      outline: none;
+      width: 190px;
+    }
+
+    .searchbox input::placeholder {
+      color: var(--muted2);
+    }
+
+    select {
+      background: var(--nested);
+      border: 1px solid var(--line-soft);
+      color: var(--text);
+      font-size: 12px;
+      font-family: var(--mono);
+      border-radius: 8px;
+      padding: 7px 10px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 0 -4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+
+    th {
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      font-weight: 500;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    td {
+      padding: 11px 12px;
+      font-size: 12.5px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    tbody tr {
+      transition: background .12s;
+    }
+
+    tbody tr:hover {
+      background: var(--surface2);
+    }
+
+    .mono {
+      font-family: var(--mono);
+      font-size: 11.5px;
+      color: var(--muted);
+    }
+
+    .strong {
+      font-weight: 600;
+    }
+
+    .muted-td {
+      color: var(--muted);
+    }
+
+    .status {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .datasrc {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+      background: var(--surface2);
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+
+    .ds-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      background: var(--line-soft);
+      color: var(--cyan);
+    }
+
+    .ds-title {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--cyan);
+    }
+
+    .datasrc p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 5px 0 0;
+    }
+
+    .datasrc b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+      display: none;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px;
+      z-index: 50;
+      overflow: auto;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 540px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted2);
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      background: var(--nested);
+      border: 1px solid var(--line-soft);
+      color: var(--text);
+      font-size: 13px;
+      font-family: var(--sans);
+      border-radius: 8px;
+      padding: 9px 10px;
+      outline: none;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .field select {
+      text-overflow: ellipsis;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--cyan);
+    }
+
+    .field textarea {
+      min-height: 62px;
+      resize: vertical;
+    }
+
+    .days-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .day-chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      border: 1px solid var(--line-soft);
+      border-radius: 7px;
+      padding: 6px 9px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .day-chip.on {
+      background: var(--surface2);
+      color: var(--cyan);
+      border-color: var(--cyan);
+    }
+
+    .swatches {
+      display: flex;
+      gap: 7px;
+    }
+
+    .swatch {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .swatch.on {
+      border-color: var(--text);
+    }
+
+    .swatch-custom {
+      background: conic-gradient(from 90deg, #ef4444, #f59e0b, #eab308, #22c55e, #06b6d4, #6366f1, #d946ef, #ef4444);
+    }
+
+    .modal-foot {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .modal-foot .right {
+      display: flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    .berth:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+    }
+
+    @media (max-width:1000px) {
+      .grid-kpi {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .cols-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width:600px) {
+      .root {
+        padding: 12px;
+      }
+
+      .grid-kpi {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .fleet {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar-right {
+        gap: 14px;
+      }
+
+      .tools {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .searchbox input {
+        width: 100%;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="root">
+    <nav class="navbar">
+      <div class="nav-brand" id="homeBtn" title="Go back to my room">
+        <span class="nav-mark" style="color:#fff">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z" />
+            <path d="M4 5.5A2.5 2.5 0 0 0 6.5 8H20" />
+          </svg>
+        </span>
+        <span class="nav-title">Study Planner</span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Room</a>
+        <button id="navPlanner" class="active">Study Planner</button>
+        <button id="navPomodoro">Pomodoro</button>
+        <a href="index.html">Achievements</a>
+        <a href="index.html#settings">Settings</a>
+      </div>
+      <div class="nav-clock">
+        <div class="shift">
+          <span class="eyebrow">Class</span>
+          <span class="shift-val" id="topStatus">—</span>
+          <span class="eyebrow" id="topDuration" style="text-transform:none;letter-spacing:.02em"></span>
+        </div>
+        <div class="clock">
+          <div class="live"><span class="dot"></span> Live</div>
+          <div class="clock-time" id="clockTime">--:--:--</div>
+          <div class="clock-date" id="clockDate"></div>
+        </div>
+      </div>
+    </nav>
+    <div id="mainView" style="display:flex;flex-direction:column;gap:14px">
+      <div class="toolbar">
+        <button class="btn primary" id="addTaskBtn">＋ Add task to do </button>
+        <button class="btn" id="addCourseBtn">＋ Subject</button>
+        <button class="btn ghost" id="settingsBtn">⚙️ Settings</button>
+        <span class="spacer"></span>
+        <button class="btn ghost" id="youtubeBtn"> Go to youtube for music :)</button>
+        <input type="file" id="icsInput" accept=".ics,text/calendar" hidden>
+        <input type="file" id="jsonInput" accept=".json,application/json" hidden>
+      </div>
+      <div id="storageStatus" class="storage-status" style="display: none;" role="status" aria-live="polite"></div>
+      <section class="panel board">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">This Week</span>
+            <div class="panel-title">Timetable</div>
+          </div>
+          <span class="board-legend">Today <span style="color:var(--gold)">●</span> · your weekly class schedule</span>
+        </div>
+        <div id="weekBoard"></div>
+        <div class="waterline" aria-hidden="true"></div>
+      </section>
+      <script>
+        document.getElementById("youtubeBtn").addEventListener("click", function () {
+          const youtubeUrl = "https://www.youtube.com";
+          window.open(youtubeUrl, "_blank");
+        });
+      </script>
+      <section class="grid-kpi" id="kpis"></section>
+      <section class="cols-2">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Progress</span>
+              <div class="panel-title">Tasks done by day</div>
+            </div>
+            <div class="seg" id="rangeSeg">
+              <button data-range="7">7 days</button>
+              <button data-range="30" class="on">30 days</button>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <div id="throughputChart"></div>
+          </div>
+          <div class="chart-legend">
+            <span><i style="background:#C25A2B"></i>Completed</span>
+            <span><i class="dash" style="background:#C98A1E"></i>Due (Plan)</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">By Subject</span>
+              <div class="panel-title">Syllabus Progress</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="seg small" id="syllabusViewSeg">
+                <button data-view="bars" class="on">Bars</button>
+                <button data-view="radar">Radar</button>
+              </div>
+              <span class="pill-muted" id="yardPill">Avg: 0%</span>
+            </div>
+          </div>
+          <div class="yard-list" id="yardList"></div>
+        </div>
+      </section>
+      <section class="cols-2">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Overview</span>
+              <div class="panel-title">Task Status</div>
+            </div>
+            <span class="pill-muted" id="subjPill">0 tasks</span>
+          </div>
+          <div class="fleet">
+            <div class="donut-wrap">
+              <div id="donut"></div>
+              <div class="donut-center">
+                <div class="donut-num" id="donutNum">0%</div>
+                <div class="donut-lbl">completed</div>
+              </div>
+            </div>
+            <div class="fleet-types" id="fleetTypes"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Reminder</span>
+              <div class="panel-title">Upcoming Deadlines</div>
+            </div>
+            <div class="seg small" id="alertSeg">
+              <button data-sev="all" class="on">All <b>0</b></button>
+              <button data-sev="critical">Overdue <b>0</b></button>
+              <button data-sev="warning">Urgent <b>0</b></button>
+              <button data-sev="info">Upcoming <b>0</b></button>
+            </div>
+          </div>
+          <div class="alerts" id="alertsList"></div>
+        </div>
+      </section>
+      <!-- Tasks table -->
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">List</span>
+            <div class="panel-title">All Tasks (<span id="tasksCount">0</span>)</div>
+          </div>
+          <div class="tools">
+            <div class="searchbox">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A78F6C" stroke-width="2"
+                stroke-linecap="round">
+                <circle cx="11" cy="11" r="6" />
+                <line x1="16" y1="16" x2="21" y2="21" />
+              </svg>
+              <input id="searchInput" placeholder="Search task name, subject, type…" />
+            </div>
+            <select id="statusSelect">
+              <option value="all">All statuses</option>
+              <option value="todo">Not started</option>
+              <option value="in_progress">In progress</option>
+              <option value="done">Completed</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Task</th>
+                <th>Subject</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Due</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tasksBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+
+      <div id="pomodoroView" style="display:none;flex-direction:column;align-items:center;gap:14px;padding-top:36px">
+
+        <section class="panel" style="width:100%;max-width:420px;text-align:center;padding:28px 24px">
+          <div id="pomoLabel" class="eyebrow" style="color:var(--gold-2);font-size:11px;margin-bottom:12px">Focus
+            Session</div>
+
+          <div id="pomoTime"
+            style="font-family:var(--mono);font-size:64px;font-weight:700;line-height:1;letter-spacing:.02em;color:var(--text)">
+            25:00</div>
+
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:22px">
+            <button class="btn primary" id="pomoStartBtn">Start</button>
+            <button class="btn" id="pomoPauseBtn">Pause</button>
+            <button class="btn ghost" id="pomoResetBtn" style="border-color:var(--line)">Reset</button>
+          </div>
+
+          <div style="border-top:1px solid var(--line-soft);margin-top:22px"></div>
+
+          <div
+            style="display:flex;gap:18px;justify-content:center;align-items:center;margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--muted)">
+            <label style="display:inline-flex;align-items:center;gap:8px">Work (min):
+              <input type="number" id="pomoWorkInput" min="1" value="25"
+                style="width:56px;background:var(--nested);border:1px solid var(--line-soft);color:var(--text);font-family:var(--mono);font-size:12px;border-radius:6px;padding:5px 7px;outline:none;text-align:center">
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:8px">Rest (min):
+              <input type="number" id="pomoRestInput" min="1" value="5"
+                style="width:56px;background:var(--nested);border:1px solid var(--line-soft);color:var(--text);font-family:var(--mono);font-size:12px;border-radius:6px;padding:5px 7px;outline:none;text-align:center">
+            </label>
+          </div>
+        </section>
+
+        <section class="panel" style="width:100%;max-width:420px">
+          <div style="margin-bottom:12px">
+            <span class="eyebrow">Session Tasks</span>
+            <div class="panel-title">Pomodoro To-Do</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input id="pomoTaskInput" placeholder="What are you working on?"
+              style="flex:1;min-width:0;background:var(--nested);border:1px solid var(--line-soft);color:var(--text);font-family:var(--sans);font-size:13px;border-radius:8px;padding:9px 11px;outline:none">
+            <button class="btn primary" id="pomoTaskAddBtn">Add</button>
+          </div>
+          <div id="pomoTaskList" style="display:flex;flex-direction:column;gap:8px;margin-top:12px"></div>
+        </section>
+
+      </div>
+    </div>
+    <div class="modal-backdrop" id="modal">
+      <div class="modal" role="dialog" aria-modal="true">
+        <div class="modal-head">
+          <span class="modal-title" id="modalTitle">—</span>
+          <button class="icon-btn" id="modalCancel" aria-label="Close">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round">
+              <line x1="6" y1="6" x2="18" y2="18" />
+              <line x1="18" y1="6" x2="6" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div id="modalBody"></div>
+        <div class="modal-foot">
+          <button class="btn danger" id="modalDelete" style="display:none">Delete</button>
+          <div class="right">
+            <button class="btn ghost" id="modalCancel2">Cancel</button>
+            <button class="btn primary" id="modalSave">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+      const CAMPUSES = [
+        "Washington Square campus: 25. West 4th St, NY 10012",
+        "Shanghai New Bund Campus: 567 West Yangsi Rd, Pudong, Shanghai, 210000",
+        "NYU Abu Dhabi: Saadiyat Island, Abu Dhabi, UAE"
+      ];
+      const NYU_ADDR = CAMPUSES[0];
+      const STORE_KEY = "sp:data:v1";
+
+      const TASK_TYPES = [["assignment", "Assignment"], ["reading", "Reading"], ["study", "Study"], ["exam", "Exam"], ["project", "Project"], ["quiz", "Quiz"], ["other", "Other"]];
+      const TASK_STATUS = [["todo", "To Do"], ["in_progress", "In Progress"], ["done", "Done"]];
+      const TYPE_LABEL = { assignment: "Assignment", reading: "Reading", study: "Study", exam: "Exam", project: "Project", quiz: "Quiz", other: "Other" };
+      const STATUS_LABEL = { todo: "To Do", in_progress: "In Progress", done: "Done" };
+      const STATUS_COLOR = { todo: "#7A5E3C", in_progress: "#C25A2B", done: "#6F7A34" };
+      const DOW_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      const DOW_FULL = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      const PALETTE = ["#C25A2B", "#6F7A34", "#C98A1E", "#A6401E", "#7A5230", "#3F7E79"];
+      const SEV = { critical: { c: "#A6401E", bg: "#F3DAC8" }, warning: { c: "#C98A1E", bg: "#F7E7C2" }, info: { c: "#3F7E79", bg: "#F0E2C6" } };
+
+      const state = { range: "30", sevFilter: "all", query: "", statusFilter: "all", syllabusView: "bars" };
+      let data = { courses: [], tasks: [] };
+
+      const pad = n => String(n).padStart(2, "0");
+      const ymd = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+      const uid = p => (p || "id") + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-3);
+      const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+      const typeLabel = t => TYPE_LABEL[t] || t;
+      const statusLabel = s => STATUS_LABEL[s] || s;
+      const typeIcon = t => ({ assignment: "flag", reading: "book", study: "activity", exam: "alert", project: "package", quiz: "star", other: "question" }[t] || "flag");
+      const courseById = id => data.courses.find(c => c.id === id);
+      const taskById = id => data.tasks.find(t => t.id === id);
+      const fmtDate = y => { if (!y) return "—"; const p = y.split("-"); return p[2] + "/" + p[1]; };
+      function daysBetween(a, b) { const da = new Date(a + "T00:00:00"), db = new Date(b + "T00:00:00"); return Math.round((db - da) / 86400000); }
+
+      function weekDates() {
+        const now = new Date();
+        const idx = (now.getDay() + 6) % 7;            // Monday = 0
+        const monday = new Date(now); monday.setDate(now.getDate() - idx); monday.setHours(0, 0, 0, 0);
+        const arr = [];
+        for (let i = 0; i < 7; i++) { const d = new Date(monday); d.setDate(monday.getDate() + i); arr.push(d); }
+        return arr;
+      }
+      function thisWeekRange() { const ds = weekDates(); return [ymd(ds[0]), ymd(ds[6])]; }
+
+      const IP = {
+        book: '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 5.5A2.5 2.5 0 0 0 6.5 8H20"/>',
+        calendar: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><line x1="3.5" y1="9.5" x2="20.5" y2="9.5"/><line x1="8" y1="3" x2="8" y2="6"/><line x1="16" y1="3" x2="16" y2="6"/>',
+        package: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5"/><line x1="12" y1="12" x2="12" y2="21"/>',
+        activity: '<polyline points="3 12 7.5 12 10.5 5 13.5 19 16.5 12 21 12"/>',
+        flag: '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
+        clock: '<circle cx="12" cy="12" r="8"/><polyline points="12 8 12 12 15 14"/>',
+        check: '<polyline points="5 12 10 17 19 7"/>',
+        alert: '<path d="M12 4L3 19h18z"/><line x1="12" y1="10" x2="12" y2="14"/><line x1="12" y1="16.6" x2="12.02" y2="16.6"/>',
+        edit: '<path d="M4 20h4L18 10l-4-4L4 16z"/><line x1="13" y1="7" x2="17" y2="11"/>',
+        trash: '<polyline points="4 7 20 7"/><path d="M6 7l1 13h10l1-13"/><path d="M9 7V4h6v3"/>',
+        arrow: '<line x1="4" y1="12" x2="19" y2="12"/><polyline points="13.5 6.5 20 12 13.5 17.5"/>',
+        close: '<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>'
+      };
+      function icon(name, size) {
+        return '<svg class="ic" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IP[name] || "") + "</svg>";
+      }
+      const tinted = (color, svg) => '<span style="color:' + color + ';display:inline-flex">' + svg + "</span>";
+
+      const hasStore = typeof window !== "undefined" && window.storage && typeof window.storage.get === "function";
+      const mem = {};
+      let storageBackend = "";
+
+      const idbKV = {
+        _p: null,
+        _open() {
+          if (this._p) return this._p;
+          if (typeof indexedDB === "undefined") { this._p = Promise.reject(new Error("no-indexeddb")); return this._p; }
+          this._p = new Promise((resolve, reject) => {
+            const req = indexedDB.open("studyPlannerDB", 1);
+            req.onupgradeneeded = () => req.result.createObjectStore("kv");
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+          });
+          return this._p;
+        },
+        async get(key) {
+          const db = await this._open();
+          return new Promise((resolve, reject) => {
+            const r = db.transaction("kv", "readonly").objectStore("kv").get(key);
+            r.onsuccess = () => resolve(r.result === undefined ? null : r.result);
+            r.onerror = () => reject(r.error);
+          });
+        },
+        async set(key, val) {
+          const db = await this._open();
+          return new Promise((resolve, reject) => {
+            const r = db.transaction("kv", "readwrite").objectStore("kv").put(val, key);
+            r.onsuccess = () => resolve(true);
+            r.onerror = () => reject(r.error);
+          });
+        }
+      };
+
+      async function loadData() {
+        if (hasStore) {
+          try { const r = await window.storage.get(STORE_KEY); storageBackend = "cloud"; return (r && r.value) ? JSON.parse(r.value) : null; } catch (e) { }
+        }
+        let idbOk = false, idbVal = null;
+        try { idbVal = await idbKV.get(STORE_KEY); idbOk = true; } catch (e) { }
+        if (idbOk) {
+          storageBackend = "indexeddb";
+          if (idbVal != null) return typeof idbVal === "string" ? JSON.parse(idbVal) : idbVal;
+          try { if (typeof localStorage !== "undefined") { const v = localStorage.getItem(STORE_KEY); if (v != null) return JSON.parse(v); } } catch (e) { }  // chuyển dữ liệu cũ từ localStorage
+          return null;
+        }
+        try { if (typeof localStorage !== "undefined") { const v = localStorage.getItem(STORE_KEY); storageBackend = "localstorage"; return v != null ? JSON.parse(v) : null; } } catch (e) { }
+        storageBackend = "memory";
+        return mem[STORE_KEY] ? JSON.parse(mem[STORE_KEY]) : null;
+      }
+
+      async function saveData() {
+        const s = JSON.stringify(data);
+        if (hasStore) { try { await window.storage.set(STORE_KEY, s); storageBackend = "cloud"; updateStorageBadge(); return true; } catch (e) { } }
+        try { await idbKV.set(STORE_KEY, s); storageBackend = "indexeddb"; updateStorageBadge(); return true; } catch (e) { }
+        try { if (typeof localStorage !== "undefined") { localStorage.setItem(STORE_KEY, s); storageBackend = "localstorage"; updateStorageBadge(); return true; } } catch (e) { }
+        mem[STORE_KEY] = s; storageBackend = "memory"; updateStorageBadge(); return false;
+      }
+      function saveAndRender() { saveData(); renderAll(); }
+
+      function updateStorageBadge() {
+        const el = document.getElementById("storageStatus");
+        if (!el) return;
+        if (storageBackend === "memory") {
+          el.textContent = "\u26A0 Not saved \u2014 your browser is blocking storage on file://. Open this file via a local server (http://localhost) so your subjects persist.";
+          el.classList.add("warn");
+        } else if (storageBackend === "cloud") {
+          el.textContent = "\u2713 Saved to your workspace.";
+          el.classList.remove("warn");
+        } else {
+          el.textContent = "\u2713 Saved on this device \u2014 your subjects stay after reload or closing the tab.";
+          el.classList.remove("warn");
+        }
+      }
+
+      function seed() {
+        const today = new Date();
+        const plus = n => { const d = new Date(today); d.setDate(d.getDate() + n); return ymd(d); };
+        const courses = [
+          { id: "c_web", name: "Introduction to Web Design and Computer Principles", code: "CSCI-UA", color: "#C25A2B", instructor: "", meetingDays: [0, 2], start: "14:00", end: "16:00", location: NYU_ADDR, syllabusTotal: 24, syllabusDone: 9 },
+          { id: "c_econ", name: "Microeconomics", code: "ECON-UA 1", color: "#6F7A34", instructor: "", meetingDays: [1, 3], start: "10:00", end: "11:30", location: NYU_ADDR, syllabusTotal: 28, syllabusDone: 14 },
+          { id: "c_stats", name: "Statistics for Economics", code: "ECON-UA 18", color: "#C98A1E", instructor: "", meetingDays: [4], start: "09:00", end: "12:00", location: NYU_ADDR, syllabusTotal: 20, syllabusDone: 6 }
+        ];
+        const tasks = [
+          { id: uid("t"), title: "HTML/CSS layout assignment", courseId: "c_web", type: "assignment", status: "in_progress", due: plus(1), time: "23:59", estHours: 4, notes: "Flexbox + grid", completedAt: null },
+          { id: uid("t"), title: "Problem Set 3", courseId: "c_stats", type: "assignment", status: "todo", due: plus(0), time: "18:00", estHours: 3, notes: "", completedAt: null },
+          { id: uid("t"), title: "Read Ch.4 – Demand & Supply", courseId: "c_econ", type: "reading", status: "todo", due: plus(2), time: "", estHours: 2, notes: "", completedAt: null },
+          { id: uid("t"), title: "Final project proposal", courseId: "c_web", type: "project", status: "todo", due: plus(5), time: "23:59", estHours: 5, notes: "", completedAt: null },
+          { id: uid("t"), title: "Midterm exam", courseId: "c_econ", type: "exam", status: "todo", due: plus(9), time: "09:00", estHours: 0, notes: "Ch.1–6", completedAt: null },
+          { id: uid("t"), title: "JS DOM practice", courseId: "c_web", type: "study", status: "done", due: plus(-1), time: "", estHours: 2, notes: "", completedAt: plus(-1) },
+          { id: uid("t"), title: "Read Ch.3 notes", courseId: "c_econ", type: "reading", status: "done", due: plus(-2), time: "", estHours: 1, notes: "", completedAt: plus(-2) },
+          { id: uid("t"), title: "Lab writeup", courseId: "c_stats", type: "assignment", status: "done", due: plus(-3), time: "", estHours: 2, notes: "", completedAt: plus(-3) }
+        ];
+        return { courses, tasks };
+      }
+
+      function normalizeData() {
+        data.courses = (data.courses || []).map(c => ({
+          id: c.id || uid("c"),
+          name: c.name || "Subject",
+          code: c.code || "",
+          color: c.color || "#C25A2B",
+          instructor: c.instructor || "",
+          meetingDays: Array.isArray(c.meetingDays) ? c.meetingDays.filter(n => n >= 0 && n <= 6) : [],
+          start: c.start || "",
+          end: c.end || "",
+          location: c.location || "",
+          syllabusTotal: parseInt(c.syllabusTotal) || 0,
+          syllabusDone: parseInt(c.syllabusDone) || 0
+        }));
+        data.tasks = (data.tasks || []).map(t => ({
+          id: t.id || uid("t"),
+          title: t.title || "(untitled)",
+          courseId: t.courseId || null,
+          type: t.type || "assignment",
+          status: t.status || "todo",
+          due: t.due || null,
+          time: t.time || "",
+          estHours: parseFloat(t.estHours) || 0,
+          notes: t.notes || "",
+          completedAt: t.completedAt || null
+        }));
+      }
+      function areaChart(dataArr, width) {
+        const H = 230, padL = 34, padR = 10, padT = 12, padB = 24;
+        const W = Math.max(width || 520, 280);
+        const plotW = W - padL - padR, plotH = H - padT - padB;
+        const peak = Math.max.apply(null, dataArr.map(d => Math.max(d.planned, d.completed)));
+        const maxV = Math.max(4, Math.ceil((peak || 0) / 4) * 4);
+        const n = dataArr.length;
+        const x = i => padL + (n === 1 ? plotW / 2 : (plotW * i) / (n - 1));
+        const y = v => padT + plotH - (v / maxV) * plotH;
+        const comp = dataArr.map((d, i) => [x(i), y(d.completed)]);
+        const plan = dataArr.map((d, i) => [x(i), y(d.planned)]);
+        const toLine = pts => pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+        const area = toLine(comp) + " L " + x(n - 1).toFixed(1) + " " + (padT + plotH).toFixed(1) + " L " + x(0).toFixed(1) + " " + (padT + plotH).toFixed(1) + " Z";
+        let grid = "";
+        [0, maxV / 2, maxV].forEach(v => {
+          const gy = y(v);
+          grid += '<line x1="' + padL + '" y1="' + gy.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + gy.toFixed(1) + '" stroke="#E3D3AE"/>';
+          grid += '<text x="' + (padL - 6) + '" y="' + (gy + 3).toFixed(1) + '" fill="#A78F6C" font-size="10" font-family="monospace" text-anchor="end">' + v + "</text>";
+        });
+        let xl = "";
+        const idxs = n <= 8 ? dataArr.map((_, i) => i) : [0, Math.floor(n / 4), Math.floor(n / 2), Math.floor(3 * n / 4), n - 1];
+        idxs.forEach(i => { xl += '<text x="' + x(i).toFixed(1) + '" y="' + (H - 8) + '" fill="#A78F6C" font-size="10" font-family="monospace" text-anchor="middle">' + dataArr[i].day + "</text>"; });
+        let dots = "";
+        comp.forEach((p, i) => { dots += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="2.5" fill="#C25A2B"><title>' + dataArr[i].day + " · Completed " + dataArr[i].completed + " · Due " + dataArr[i].planned + "</title></circle>"; });
+        const planPoly = plan.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+        const compPoly = comp.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+        return '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '" xmlns="http://www.w3.org/2000/svg">'
+          + '<defs><linearGradient id="gDone" x1="0" y1="0" x2="0" y2="1">'
+          + '<stop offset="0%" stop-color="#C25A2B" stop-opacity="0.32"/><stop offset="100%" stop-color="#C25A2B" stop-opacity="0.02"/>'
+          + "</linearGradient></defs>"
+          + grid
+          + '<path d="' + area + '" fill="url(#gDone)"/>'
+          + '<polyline points="' + planPoly + '" fill="none" stroke="#C98A1E" stroke-width="1.5" stroke-dasharray="4 4"/>'
+          + '<polyline points="' + compPoly + '" fill="none" stroke="#C25A2B" stroke-width="2"/>'
+          + dots + xl + "</svg>";
+      }
+
+      function donut(split) {
+        const size = 150, r = 52, cx = size / 2, cy = size / 2, sw = 16;
+        const C = 2 * Math.PI * r;
+        let acc = 0, segs = "";
+        split.forEach(s => {
+          const frac = s.value / 100, len = frac * C;
+          segs += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + s.color + '" stroke-width="' + sw + '" stroke-dasharray="' + len.toFixed(2) + " " + (C - len).toFixed(2) + '" stroke-dashoffset="' + (-acc * C).toFixed(2) + '" transform="rotate(-90 ' + cx + " " + cy + ')"><title>' + s.name + " · " + s.value + "%</title></circle>";
+          acc += frac;
+        });
+        return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + " " + size + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#E7D8B4" stroke-width="' + sw + '"/>' + segs + "</svg>";
+      }
+
+      function radarChart(items) {
+        const size = 300, cx = size / 2, cy = size / 2, R = 96, rings = 4;
+        const n = items.length;
+        const ang = i => -Math.PI / 2 + (2 * Math.PI * i) / n;
+        const pt = (i, r) => [cx + r * Math.cos(ang(i)), cy + r * Math.sin(ang(i))];
+        const poly = r => items.map((_, i) => { const [x, y] = pt(i, r); return x.toFixed(1) + "," + y.toFixed(1); }).join(" ");
+        let grid = "";
+        for (let L = 1; L <= rings; L++) grid += '<polygon points="' + poly(R * L / rings) + '" style="fill:none;stroke:var(--line-soft);stroke-width:1"/>';
+        let spokes = "", labels = "";
+        items.forEach((it, i) => {
+          const [ex, ey] = pt(i, R);
+          spokes += '<line x1="' + cx + '" y1="' + cy + '" x2="' + ex.toFixed(1) + '" y2="' + ey.toFixed(1) + '" style="stroke:var(--line-soft);stroke-width:1"/>';
+          const [lx, ly] = pt(i, R + 16);
+          const anchor = Math.abs(lx - cx) < 10 ? "middle" : (lx > cx ? "start" : "end");
+          const nm = it.name.length > 12 ? it.name.slice(0, 11) + "…" : it.name;
+          labels += '<text x="' + lx.toFixed(1) + '" y="' + (ly + 3).toFixed(1) + '" text-anchor="' + anchor + '" style="fill:var(--muted);font-size:10px;font-family:var(--mono)">' + esc(nm) + '</text>';
+        });
+        const dp = items.map((it, i) => pt(i, R * Math.max(0, Math.min(100, it.pct)) / 100));
+        const dpoly = dp.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" ");
+        let dots = "";
+        dp.forEach((p, i) => dots += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3.5" fill="' + items[i].color + '"><title>' + esc(items[i].name) + " · " + items[i].pct + '%</title></circle>');
+        return '<svg viewBox="-40 -4 380 308" width="380" style="max-width:100%;height:auto;display:block;margin:4px auto 0" xmlns="http://www.w3.org/2000/svg">'
+          + grid + spokes
+          + '<polygon points="' + dpoly + '" style="fill:var(--cyan);fill-opacity:0.15;stroke:var(--cyan);stroke-width:2"/>'
+          + dots + labels + '</svg>';
+      }
+
+      function renderTopStatus() {
+        const now = new Date(), idx = (now.getDay() + 6) % 7;
+        const mins = now.getHours() * 60 + now.getMinutes();
+        const toM = t => { const p = (t || "0:0").split(":").map(Number); return p[0] * 60 + p[1]; };
+        const todays = data.courses.filter(c => c.meetingDays.includes(idx) && c.start)
+          .map(c => ({ c, s: toM(c.start), e: toM(c.end || c.start) })).sort((a, b) => a.s - b.s);
+        let label = "No classes scheduled", dur = "";
+        const ongoing = todays.find(x => mins >= x.s && mins < x.e);
+        if (ongoing) { label = "Ongoing · " + (ongoing.c.code || ongoing.c.name); dur = ongoing.c.start + "–" + ongoing.c.end; }
+        else {
+          const next = todays.find(x => x.s > mins);
+          if (next) { label = "Next · " + (next.c.code || next.c.name); dur = next.c.start + "–" + next.c.end; }
+          else {
+            for (let k = 1; k <= 7; k++) {
+              const di = (idx + k) % 7;
+              const cs = data.courses.filter(c => c.meetingDays.includes(di) && c.start).sort((a, b) => toM(a.start) - toM(b.start));
+              if (cs.length) { label = DOW_FULL[di] + " · " + (cs[0].code || cs[0].name); dur = cs[0].start + "–" + cs[0].end; break; }
+            }
+          }
+        }
+        document.getElementById("topStatus").textContent = label;
+        document.getElementById("topDuration").textContent = dur ? ("Time: " + dur) : "";
+      }
+
+      function renderWeekBoard() {
+        const el = document.getElementById("weekBoard");
+        const dates = weekDates(), todayY = ymd(new Date());
+        const toMin = t => { const p = (t || "0:0").split(":"); return (+p[0]) * 60 + (+p[1] || 0); };
+        const scheduled = data.courses.filter(c => c.start && c.end && c.meetingDays && c.meetingDays.length);
+        if (!scheduled.length) {
+          el.innerHTML = '<div class="empty">No classes scheduled.</div>';
+          return;
+        }
+        const nDays = 7;
+        const rs0 = Math.min.apply(null, scheduled.map(c => toMin(c.start)));
+        const re0 = Math.max.apply(null, scheduled.map(c => toMin(c.end)));
+        let rs = Math.floor(rs0 / 60) * 60, re = Math.ceil(re0 / 60) * 60;
+        if (re - rs < 240) re = rs + 240;
+        const HH = 50, totalH = (re - rs) / 60 * HH;
+        const grid = "grid-template-columns:52px repeat(" + nDays + ",1fr)";
+        const packDay = list => {
+          list.sort((a, b) => a.s - b.s || a.e - b.e);
+          let cluster = [], clusterEnd = -1;
+          const assign = cl => {
+            const ends = [];
+            cl.forEach(it => {
+              let placed = false;
+              for (let i = 0; i < ends.length; i++) { if (ends[i] <= it.s) { ends[i] = it.e; it.col = i; placed = true; break; } }
+              if (!placed) { it.col = ends.length; ends.push(it.e); }
+            });
+            cl.forEach(it => { it.cols = ends.length; });
+          };
+          list.forEach(it => {
+            if (cluster.length && it.s >= clusterEnd) { assign(cluster); cluster = []; clusterEnd = -1; }
+            cluster.push(it); clusterEnd = Math.max(clusterEnd, it.e);
+          });
+          if (cluster.length) assign(cluster);
+          return list;
+        };
+        let head = '<div class="tt-corner"></div>';
+        for (let i = 0; i < nDays; i++) {
+          const isT = ymd(dates[i]) === todayY;
+          head += '<div class="tt-dayh' + (isT ? " today" : "") + '">' + DOW_SHORT[i] + '<span>' + pad(dates[i].getDate()) + "/" + pad(dates[i].getMonth() + 1) + "</span></div>";
+        }
+        let gutter = "";
+        for (let m = rs; m <= re; m += 60) gutter += '<div class="tt-hr" style="top:' + ((m - rs) / 60 * HH) + 'px">' + pad(m / 60) + ":00</div>";
+        const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+        let cols = "";
+        for (let i = 0; i < nDays; i++) {
+          const isT = ymd(dates[i]) === todayY;
+          const items = packDay(scheduled.filter(c => c.meetingDays.includes(i)).map(c => ({ c, s: toMin(c.start), e: toMin(c.end) })));
+          let blocks = "";
+          items.forEach(it => {
+            const top = (it.s - rs) / 60 * HH, h = Math.max(24, (it.e - it.s) / 60 * HH);
+            const w = 100 / it.cols, left = it.col * w, col = it.c.color || "#C25A2B";
+            const ttLabel = it.c.code ? (esc(it.c.code) + (it.c.name ? ' <span class="tt-bn">' + esc(it.c.name) + '</span>' : "")) : esc(it.c.name || "");
+            blocks += '<div class="tt-block" data-id="' + it.c.id + '" title="Edit class" style="top:' + top + "px;height:" + (h - 3) + "px;left:calc(" + left + "% + 2px);width:calc(" + w + "% - 4px);background:" + col + "22;border-left:3px solid " + col + '">'
+              + '<div class="tt-bc" style="color:' + col + '">' + ttLabel + "</div>"
+              + '<div class="tt-bt">' + esc(it.c.start) + "–" + esc(it.c.end) + "</div>"
+              + (it.c.location ? '<div class="tt-bl">' + esc(it.c.location) + "</div>" : "")
+              + "</div>";
+          });
+          const now = (isT && nowMin >= rs && nowMin <= re) ? '<div class="tt-now" style="top:' + ((nowMin - rs) / 60 * HH) + 'px"></div>' : "";
+          cols += '<div class="tt-col' + (isT ? " today" : "") + '" data-day="' + i + '" title="Click an empty slot to add a class" style="height:' + totalH + "px;background-size:100% " + HH + 'px">' + blocks + now + "</div>";
+        }
+        el.innerHTML = '<div class="tt"><div class="tt-scroll"><div class="tt-inner">'
+          + '<div class="tt-head" style="' + grid + '">' + head + "</div>"
+          + '<div class="tt-body" style="' + grid + '"><div class="tt-gutter" style="height:' + totalH + 'px">' + gutter + "</div>" + cols + "</div>"
+          + "</div></div></div>";
+        el.querySelectorAll(".tt-block").forEach(b => b.onclick = () => { const c = courseById(b.dataset.id); if (c) openCourseModal(c); });
+        el.querySelectorAll(".tt-col").forEach(colEl => colEl.addEventListener("click", e => {
+          if (e.target.closest(".tt-block")) return;                       // clicking an existing class -> edit it, not add
+          const rect = colEl.getBoundingClientRect();
+          let minute = rs + ((e.clientY - rect.top) / HH) * 60;            // vertical position -> minutes of day
+          minute = Math.max(rs, Math.min(re - 60, Math.round(minute / 15) * 15));   // snap to 15 min, keep 1h inside range
+          const fmtT = m => pad(Math.floor(m / 60)) + ":" + pad(m % 60);
+          openCourseModal(null, { meetingDays: [+colEl.dataset.day], start: fmtT(minute), end: fmtT(minute + 60) });
+        }));
+      }
+
+      function computeStreak() {
+        const set = new Set(data.tasks.filter(t => t.completedAt).map(t => t.completedAt));
+        let s = 0, d = new Date();
+        if (!set.has(ymd(d))) d.setDate(d.getDate() - 1);
+        while (set.has(ymd(d))) { s++; d.setDate(d.getDate() - 1); }
+        return s;
+      }
+
+      function renderKpis() {
+        const todayY = ymd(new Date());
+        const [wStart, wEnd] = thisWeekRange();
+        const t = data.tasks;
+        const dueTodayOpen = t.filter(x => x.due === todayY && x.status !== "done").length;
+        const overdue = t.filter(x => x.status !== "done" && x.due && x.due < todayY).length;
+        const doneThisWeek = t.filter(x => x.completedAt && x.completedAt >= wStart && x.completedAt <= wEnd).length;
+        const open = t.filter(x => x.status !== "done").length;
+        const exams = t.filter(x => x.type === "exam" && x.status !== "done" && x.due && x.due >= todayY);
+        const nextExamDays = exams.length ? Math.min.apply(null, exams.map(x => daysBetween(todayY, x.due))) : null;
+        const withSyl = data.courses.filter(c => c.syllabusTotal > 0);
+        const sylAvg = withSyl.length ? Math.round(withSyl.reduce((a, c) => a + c.syllabusDone / c.syllabusTotal, 0) / withSyl.length * 100) : 0;
+        const streak = computeStreak();
+        const doneHours = t.filter(x => x.completedAt && x.completedAt >= wStart && x.completedAt <= wEnd).reduce((a, x) => a + (Number(x.estHours) || 0), 0);
+        const goalHours = parseFloat(localStorage.getItem("myLockInGoal")) || 20;
+        const goalPct = Math.min(100, Math.round(doneHours / goalHours * 100));
+
+        const items = [
+          { label: "Due Today", value: dueTodayOpen, unit: "tasks", sub: overdue ? (overdue + " overdue tasks") : "No overdue tasks", icon: "flag" },
+          { label: "Completed This Week", value: doneThisWeek, unit: "tasks", sub: "Week " + wStart.slice(5) + " – " + wEnd.slice(5), icon: "check" },
+          { label: "Study Streak", value: streak, unit: "days", sub: streak ? "Keep it up!" : "Start today", icon: "activity" },
+          { label: "Average Progress", value: sylAvg, unit: "%", sub: withSyl.length + " subjects being tracked", icon: "book" },
+          { label: "Open Tasks", value: open, unit: "", sub: exams.length ? (exams.length + " exams" + (nextExamDays != null ? " · next exam in " + nextExamDays + " days" : "")) : "No upcoming exams", icon: "package" }
+        ];
+        const cards = items.map(k =>
+          '<div class="panel kpi"><div class="kpi-top"><span class="eyebrow">' + k.label + "</span>" + tinted("var(--muted2)", icon(k.icon, 15)) + "</div>"
+          + '<div class="kpi-val">' + k.value + '<span class="kpi-unit">' + k.unit + "</span></div>"
+          + '<div class="kpi-foot"><span class="kpi-sub">' + k.sub + "</span></div></div>"
+        ).join("");
+        const hse = '<div class="panel kpi hse" onclick="editLockInGoal()" style="cursor: pointer;" title="Click to change goal"><div class="kpi-top"><span class="eyebrow" style="color:var(--amber)">Lock-in duration today </span>' + tinted("var(--amber)", icon("clock", 15)) + "</div>"
+          + '<div class="kpi-val hse-val">' + doneHours + '<span class="kpi-unit">/ ' + goalHours + "h</span></div>"
+          + '<div class="kpi-foot"><span class="kpi-sub"> Goal ' + goalHours + " hours · " + goalPct + "%</span></div>"
+          + '<div class="hse-bar"><span style="width:' + goalPct + '%"></span></div></div>';
+        document.getElementById("kpis").innerHTML = cards + hse;
+      }
+      window.editLockInGoal = function () {
+        let currentGoal = localStorage.getItem("myLockInGoal") || "20";
+        let newVal = prompt("Enter your new Lock-in Goal (hours):", currentGoal);
+
+        if (newVal === null || newVal.trim() === "") return;
+        let hours = parseFloat(newVal);
+        if (isNaN(hours) || hours <= 0) {
+          alert("Please enter a valid number!");
+          return;
+        }
+
+        localStorage.setItem("myLockInGoal", hours);
+        renderKpis();
+      };
+      function buildTrend(days) {
+        const arr = [], today = new Date();
+        for (let i = days - 1; i >= 0; i--) {
+          const d = new Date(today); d.setDate(today.getDate() - i);
+          const y = ymd(d);
+          arr.push({
+            day: pad(d.getDate()) + "/" + pad(d.getMonth() + 1),
+            planned: data.tasks.filter(t => t.due === y).length,
+            completed: data.tasks.filter(t => t.completedAt === y).length
+          });
+        }
+        return arr;
+      }
+      function renderThroughput() {
+        const el = document.getElementById("throughputChart");
+        const w = el.clientWidth || 520;
+        el.innerHTML = areaChart(buildTrend(state.range === "7" ? 7 : 30), w);
+      }
+
+      function renderByCourse() {
+        const yardList = document.getElementById("yardList");
+        const withSyl = data.courses.filter(c => c.syllabusTotal > 0);
+        const avg = withSyl.length ? Math.round(withSyl.reduce((a, c) => a + c.syllabusDone / c.syllabusTotal, 0) / withSyl.length * 100) : 0;
+        document.getElementById("yardPill").textContent = "Avg: " + avg + "%";
+
+        if (state.syllabusView === "radar") {
+          const items = data.courses.map(c => ({
+            name: c.name,
+            color: c.color || "#C25A2B",
+            pct: c.syllabusTotal > 0 ? Math.round(c.syllabusDone / c.syllabusTotal * 100) : 0
+          }));
+          yardList.innerHTML = items.length < 3
+            ? '<div class="empty">Radar needs at least 3 subjects (you have ' + items.length + '). Add more, or use Bars view.</div>'
+            : radarChart(items);
+          return;
+        }
+
+        const rows = data.courses.map(c => {
+          const pct = c.syllabusTotal > 0 ? Math.round(c.syllabusDone / c.syllabusTotal * 100) : 0;
+          const col = c.color || "#C25A2B";
+          return '<div class="yard-row"><div class="yard-meta">' + tinted(col, icon("book", 14))
+            + '<span class="yard-name">' + esc(c.name) + '</span><span class="yard-code">' + esc(c.code || "") + '</span>'
+            + '<span class="row-actions"><button class="icon-btn danger courseDel" data-id="' + c.id + '" title="Delete class">' + icon("trash", 14) + '</button></span></div>'
+            + '<div class="yard-track"><span class="yard-fill" style="width:' + pct + "%;background:" + col + '"></span></div>'
+            + '<span class="yard-pct" style="color:' + col + '">' + pct + "%</span></div>";
+        }).join("");
+        yardList.innerHTML = rows || '<div class="empty">No subjects added. Click "＋ Subject" to add one.</div>';
+        yardList.querySelectorAll(".courseDel").forEach(b => b.onclick = () => {
+          const c = courseById(b.dataset.id);
+          if (confirm('Delete class "' + (c ? (c.code || c.name) : "") + '"? Tasks associated with this class will be unlinked (but not deleted).')) deleteCourse(b.dataset.id);
+        });
+      }
+      function renderSubjects() {
+        const t = data.tasks, total = t.length || 1;
+        const done = t.filter(x => x.status === "done").length;
+        const prog = t.filter(x => x.status === "in_progress").length;
+        const todo = t.filter(x => x.status === "todo").length;
+        const split = [
+          { name: "Completed", value: Math.round(done / total * 100), color: "#6F7A34" },
+          { name: "In Progress", value: Math.round(prog / total * 100), color: "#C25A2B" },
+          { name: "To Do", value: Math.round(todo / total * 100), color: "#C98A1E" }
+        ];
+        document.getElementById("donut").innerHTML = donut(split);
+        document.getElementById("donutNum").textContent = Math.round(done / total * 100) + "%";
+        document.getElementById("subjPill").textContent = data.tasks.length + " tasks";
+        const rows = TASK_TYPES.map(([k, lbl]) => {
+          const arr = t.filter(x => x.type === k);
+          if (!arr.length) return "";
+          const dn = arr.filter(x => x.status === "done").length;
+          const pct = Math.round(dn / arr.length * 100);
+          return '<div class="ft-row">' + tinted("var(--muted2)", icon(typeIcon(k), 13))
+            + '<span class="ft-name">' + lbl + '</span><div class="ft-track"><span style="width:' + pct + '%"></span></div>'
+            + '<span class="ft-count">' + dn + "/" + arr.length + "</span></div>";
+        }).filter(Boolean).join("");
+        document.getElementById("fleetTypes").innerHTML = rows || '<div class="empty">No tasks yet.</div>';
+      }
+
+      function setSegCount(sev, n) {
+        const btn = document.querySelector('#alertSeg button[data-sev="' + sev + '"]');
+        if (btn) { const b = btn.querySelector("b"); if (b) b.textContent = n; }
+      }
+      function renderReminders() {
+        document.querySelectorAll("#alertSeg button").forEach(b => b.classList.toggle("on", b.dataset.sev === state.sevFilter));
+        const todayY = ymd(new Date());
+        const upcoming = data.tasks.filter(t => t.status !== "done" && t.due).map(t => {
+          const dd = daysBetween(todayY, t.due);
+          let sev = "info";
+          if (t.due < todayY) sev = "critical"; else if (dd <= 2) sev = "warning";
+          return { t, dd, sev };
+        }).sort((a, b) => (a.t.due < b.t.due ? -1 : a.t.due > b.t.due ? 1 : 0));
+        setSegCount("all", upcoming.length);
+        setSegCount("critical", upcoming.filter(x => x.sev === "critical").length);
+        setSegCount("warning", upcoming.filter(x => x.sev === "warning").length);
+        setSegCount("info", upcoming.filter(x => x.sev === "info").length);
+        const vis = upcoming.filter(x => state.sevFilter === "all" || x.sev === state.sevFilter).slice(0, 14);
+        document.getElementById("alertsList").innerHTML = vis.length ? vis.map(({ t, dd, sev }) => {
+          const s = SEV[sev], c = courseById(t.courseId);
+          const when = t.due < todayY ? ("Late " + Math.abs(dd) + " days") : dd === 0 ? "Today" : dd === 1 ? "Tomorrow" : (dd + " days from now");
+          const meta = (c ? esc(c.code || c.name) + " · " : "") + typeLabel(t.type);
+          return '<div class="alert" style="border-left-color:' + s.c + '"><div class="alert-ic" style="background:' + s.bg + ";color:" + s.c + '">' + icon("alert", 14) + "</div>"
+            + '<div class="alert-body"><div class="alert-title">' + esc(t.title) + '</div><div class="alert-meta">' + meta + "</div></div>"
+            + '<div class="alert-time">' + when + "</div>"
+            + '<button class="icon-btn danger alertRemove" data-id="' + t.id + '" title="Remove deadline (keep task)">' + icon("close", 14) + "</button></div>";
+        }).join("") : '<div class="empty">No reminders today :) .</div>';
+        document.getElementById("alertsList").querySelectorAll(".alertRemove").forEach(b => b.onclick = () => {
+          const t = taskById(b.dataset.id);
+          if (t && confirm('Remove the deadline for "' + t.title + '"? The task is kept; only its due date is cleared.')) {
+            t.due = null; t.time = "";
+            saveAndRender();
+          }
+        });
+      }
+
+      function renderTasks() {
+        const q = state.query.trim().toLowerCase(), todayY = ymd(new Date());
+        let vis = data.tasks.filter(t => {
+          const c = courseById(t.courseId);
+          const hay = (t.title + " " + (c ? c.name + " " + c.code : "") + " " + typeLabel(t.type)).toLowerCase();
+          const mq = !q || hay.indexOf(q) >= 0;
+          const ms = state.statusFilter === "all" || t.status === state.statusFilter;
+          return mq && ms;
+        }).sort((a, b) => { const av = a.due || "9999", bv = b.due || "9999"; return av < bv ? -1 : av > bv ? 1 : 0; });
+        document.getElementById("tasksCount").textContent = vis.length;
+        const el = document.getElementById("tasksBody");
+        el.innerHTML = vis.length ? vis.map(t => {
+          const c = courseById(t.courseId), sc = STATUS_COLOR[t.status];
+          const overdue = t.status !== "done" && t.due && t.due < todayY;
+          const dueTxt = t.due ? (fmtDate(t.due) + (t.time ? " " + t.time : "")) : "—";
+          return "<tr>"
+            + '<td class="strong">' + esc(t.title) + "</td>"
+            + "<td>" + (c ? '<span style="color:' + c.color + '">●</span> ' + esc(c.code || c.name) : '<span class="muted-td">—</span>') + "</td>"
+            + '<td class="muted-td">' + typeLabel(t.type) + "</td>"
+            + '<td><span class="status statusPill" data-id="' + t.id + '" style="color:' + sc + ";background:" + sc + '1F;cursor:pointer" title="Click to change status">' + statusLabel(t.status) + "</span></td>"
+            + '<td class="mono' + (overdue ? "" : " muted-td") + '"' + (overdue ? ' style="color:var(--red)"' : "") + ">" + dueTxt + "</td>"
+            + '<td style="white-space:nowrap"><button class="icon-btn editBtn" data-id="' + t.id + '" title="Edit">' + icon("edit", 15) + '</button><button class="icon-btn danger delBtn" data-id="' + t.id + '" title="Delete">' + icon("trash", 15) + "</button></td>"
+            + "</tr>";
+        }).join("") : '<tr><td colspan="6" class="empty">No tasks found.</td></tr>';
+        el.querySelectorAll(".statusPill").forEach(b => b.onclick = () => cycleStatus(b.dataset.id));
+        el.querySelectorAll(".editBtn").forEach(b => b.onclick = () => openTaskModal(taskById(b.dataset.id)));
+        el.querySelectorAll(".delBtn").forEach(b => b.onclick = () => { if (confirm("Delete this task?")) deleteTask(b.dataset.id); });
+      }
+
+      function renderAll() {
+        renderTopStatus(); renderWeekBoard(); renderKpis();
+        renderThroughput(); renderByCourse(); renderSubjects();
+        renderReminders(); renderTasks();
+      }
+      function cycleStatus(id) {
+        const t = taskById(id); if (!t) return;
+        const order = ["todo", "in_progress", "done"];
+        const nx = order[(order.indexOf(t.status) + 1) % order.length];
+        t.status = nx;
+        t.completedAt = nx === "done" ? ymd(new Date()) : null;
+        saveAndRender();
+      }
+      function deleteTask(id) { data.tasks = data.tasks.filter(t => t.id !== id); saveAndRender(); }
+      function deleteCourse(id) {
+        data.courses = data.courses.filter(c => c.id !== id);
+        data.tasks.forEach(t => { if (t.courseId === id) t.courseId = null; });
+        saveAndRender();
+      }
+
+      const modalEl = () => document.getElementById("modal");
+      const showModal = () => modalEl().classList.add("show");
+      const hideModal = () => modalEl().classList.remove("show");
+      const optionTags = (list, sel) => list.map(([v, l]) => '<option value="' + v + '"' + (v === sel ? " selected" : "") + ">" + l + "</option>").join("");
+      const courseOptions = sel => '<option value="">— No course assigned —</option>' + data.courses.map(c => '<option value="' + c.id + '"' + (c.id === sel ? " selected" : "") + ">" + esc(c.code ? c.code + " · " + c.name : c.name) + "</option>").join("");
+
+      function openTaskModal(task) {
+        const t = task || { title: "", courseId: "", type: "assignment", status: "todo", due: ymd(new Date()), time: "", estHours: "", notes: "" };
+        const editing = !!task;
+        document.getElementById("modalTitle").textContent = editing ? "Edit Task" : "Add Task";
+        document.getElementById("modalBody").innerHTML =
+          '<div class="form-grid">'
+          + '<div class="field full"><label>Task Name</label><input id="f_title" value="' + esc(t.title) + '" placeholder="e.g., Chapter 4 Assignment"></div>'
+          + '<div class="field"><label>Course</label><select id="f_course">' + courseOptions(t.courseId) + "</select></div>"
+          + '<div class="field"><label>Type</label><select id="f_type">' + optionTags(TASK_TYPES, t.type) + "</select></div>"
+          + '<div class="field"><label>Status</label><select id="f_status">' + optionTags(TASK_STATUS, t.status) + "</select></div>"
+          + '<div class="field"><label>Due Date</label><input type="date" id="f_due" value="' + esc(t.due || "") + '"></div>'
+          + '<div class="field"><label>Time</label><input type="time" id="f_time" value="' + esc(t.time || "") + '"></div>'
+          + '<div class="field"><label>Estimated Hours</label><input type="number" min="0" step="0.5" id="f_hours" value="' + esc(t.estHours === 0 ? "0" : (t.estHours || "")) + '"></div>'
+          + '<div class="field full"><label>Notes</label><textarea id="f_notes" placeholder="Optional">' + esc(t.notes || "") + "</textarea></div>"
+          + "</div>";
+        const del = document.getElementById("modalDelete");
+        del.style.display = editing ? "inline-flex" : "none";
+        del.onclick = editing ? () => { if (confirm("Delete this task?")) { deleteTask(t.id); hideModal(); } } : null;
+        document.getElementById("modalSave").onclick = () => {
+          const title = document.getElementById("f_title").value.trim();
+          if (!title) { document.getElementById("f_title").focus(); return; }
+          const obj = {
+            title,
+            courseId: document.getElementById("f_course").value || null,
+            type: document.getElementById("f_type").value,
+            status: document.getElementById("f_status").value,
+            due: document.getElementById("f_due").value || null,
+            time: document.getElementById("f_time").value || "",
+            estHours: parseFloat(document.getElementById("f_hours").value) || 0,
+            notes: document.getElementById("f_notes").value.trim()
+          };
+          if (editing) {
+            Object.assign(t, obj);
+            if (t.status === "done" && !t.completedAt) t.completedAt = ymd(new Date());
+            if (t.status !== "done") t.completedAt = null;
+          } else {
+            obj.id = uid("t");
+            obj.completedAt = obj.status === "done" ? ymd(new Date()) : null;
+            data.tasks.push(obj);
+          }
+          saveData(); renderAll(); hideModal();
+        };
+        showModal();
+        setTimeout(() => document.getElementById("f_title").focus(), 30);
+      }
+
+      function openCourseModal(course, prefill) {
+        const c = course || Object.assign({ name: "", code: "", color: "#C25A2B", instructor: "", meetingDays: [], start: "", end: "", location: "", syllabusTotal: "", syllabusDone: "" }, prefill || {});
+        const editing = !!course;
+        document.getElementById("modalTitle").textContent = editing ? "Edit Course" : "Add Course";
+        const isPreset = PALETTE.indexOf(c.color) >= 0;
+        const swatches = PALETTE.map(col => '<span class="swatch' + (col === c.color ? " on" : "") + '" data-col="' + col + '" style="background:' + col + '"></span>').join("")
+          + '<span class="swatch-wrap" style="position:relative;display:inline-flex">'
+          + '<span class="swatch swatch-custom' + (isPreset ? "" : " on") + '" id="cf_custom_sw" title="Custom color…"' + (isPreset ? "" : ' style="background:' + esc(c.color) + '"') + '></span>'
+          + '<input type="color" id="cf_color_input" value="' + (isPreset ? "#C25A2B" : esc(c.color || "#C25A2B")) + '" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0;margin:0">'
+          + '</span>';
+        const days = DOW_SHORT.map((d, i) => '<span class="day-chip' + ((c.meetingDays || []).includes(i) ? " on" : "") + '" data-day="' + i + '">' + d + "</span>").join("");
+        const isCustomLoc = CAMPUSES.indexOf(c.location || "") < 0;
+        const campusOpts = CAMPUSES.map(cp => '<option value="' + esc(cp) + '"' + (c.location === cp ? " selected" : "") + '>' + esc(cp) + '</option>').join("") + '<option value="__custom"' + (isCustomLoc ? " selected" : "") + '>Custom…</option>';
+        document.getElementById("modalBody").innerHTML =
+          '<div class="form-grid">'
+          + '<div class="field full"><label>Course Name</label><input id="cf_name" value="' + esc(c.name) + '" placeholder="e.g., Microeconomics"></div>'
+          + '<div class="field"><label>Course Code</label><input id="cf_code" value="' + esc(c.code || "") + '" placeholder="ECON-UA 1"></div>'
+          + '<div class="field"><label>Instructor</label><input id="cf_inst" value="' + esc(c.instructor || "") + '" placeholder="Optional"></div>'
+          + '<div class="field full"><label>Color</label><div class="swatches" id="cf_sw">' + swatches + "</div></div>"
+          + '<div class="field full"><label>Meeting Days</label><div class="days-row" id="cf_days">' + days + '</div><span id="cf_days_err" style="display:none;font-family:var(--mono);font-size:11px;color:var(--red);margin-top:5px">Please pick at least one meeting day.</span></div>'
+          + '<div class="field"><label>Start Time</label><input type="time" id="cf_start" value="' + esc(c.start || "") + '"></div>'
+          + '<div class="field"><label>End Time</label><input type="time" id="cf_end" value="' + esc(c.end || "") + '"></div>'
+          + '<div class="field full"><label>Location (Campus)</label>'
+          + '<input id="cf_loc" placeholder="Enter address" value="' + esc(c.location || "") + '"></div>'
+          + '<div class="field"><label>Completed Assignments</label><input type="number" min="0" id="cf_sdone" value="' + esc(c.syllabusDone || "") + '"></div>'
+          + "</div>";
+        let curColor = c.color;
+        const swEls = () => document.querySelectorAll("#cf_sw .swatch");
+        document.querySelectorAll("#cf_sw .swatch[data-col]").forEach(s => s.onclick = () => {
+          swEls().forEach(x => x.classList.remove("on"));
+          s.classList.add("on"); curColor = s.dataset.col;
+        });
+        const cfColorInput = document.getElementById("cf_color_input");
+        const cfCustomSw = document.getElementById("cf_custom_sw");
+        if (cfColorInput) cfColorInput.oninput = () => {
+          curColor = cfColorInput.value;
+          swEls().forEach(x => x.classList.remove("on"));
+          cfCustomSw.classList.add("on");
+          cfCustomSw.style.background = curColor;
+        };
+        document.querySelectorAll("#cf_days .day-chip").forEach(s => s.onclick = () => {
+          s.classList.toggle("on");
+          const err = document.getElementById("cf_days_err");
+          if (err && document.querySelectorAll("#cf_days .day-chip.on").length) err.style.display = "none";
+        });
+        const del = document.getElementById("modalDelete");
+        del.style.display = editing ? "inline-flex" : "none";
+        del.onclick = editing ? () => { if (confirm("Delete this course? All tasks associated with the course will be unlinked.")) { deleteCourse(c.id); hideModal(); } } : null;
+        document.getElementById("modalSave").onclick = () => {
+          const name = document.getElementById("cf_name").value.trim();
+          if (!name) { document.getElementById("cf_name").focus(); return; }
+          const mdays = [].slice.call(document.querySelectorAll("#cf_days .day-chip.on")).map(x => +x.dataset.day);
+          if (!mdays.length) {
+            const err = document.getElementById("cf_days_err");
+            if (err) err.style.display = "block";
+            document.getElementById("cf_days").scrollIntoView({ block: "center", behavior: "smooth" });
+            return;
+          }
+          const obj = {
+            name,
+            code: document.getElementById("cf_code").value.trim(),
+            color: curColor,
+            instructor: document.getElementById("cf_inst").value.trim(),
+            meetingDays: mdays,
+            start: document.getElementById("cf_start").value,
+            end: document.getElementById("cf_end").value,
+            location: document.getElementById("cf_loc").value.trim(),
+            syllabusTotal: parseInt(c.syllabusTotal) || 0,
+            syllabusDone: parseInt(document.getElementById("cf_sdone").value) || 0
+          };
+          if (editing) Object.assign(c, obj); else { obj.id = uid("c"); data.courses.push(obj); }
+          saveData(); renderAll(); hideModal();
+        };
+        showModal();
+        setTimeout(() => document.getElementById("cf_name").focus(), 30);
+      }
+
+      function exportJson() {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "study-planner-data.json"; a.click();
+        URL.revokeObjectURL(url);
+      }
+      function importJsonFile(file) {
+        const r = new FileReader();
+        r.onload = () => {
+          try {
+            const obj = JSON.parse(r.result);
+            if (!obj || !Array.isArray(obj.courses) || !Array.isArray(obj.tasks)) throw new Error("shape");
+            data = obj; normalizeData(); saveData(); renderAll();
+            alert("Successfully imported JSON data.");
+          } catch (e) { alert("Invalid JSON file (must have courses and tasks arrays)."); }
+        };
+        r.readAsText(file);
+      }
+
+      function parseIcsDate(v) {
+        const m = v.match(/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?)?/);
+        if (!m) return null;
+        const y = +m[1], mo = +m[2], d = +m[3], hasTime = !!m[4];
+        return { y: y, m: mo, d: d, date: y + "-" + pad(mo) + "-" + pad(d), time: hasTime ? (m[4] + ":" + m[5]) : "", hasTime: hasTime };
+      }
+      function parseIcs(text) {
+        const raw = text.replace(/\r\n/g, "\n").replace(/\n[ \t]/g, "");   // normalize + unfold
+        const lines = raw.split("\n");
+        const courses = [], tasks = []; let ev = null, ci = 0;
+        const map = { SU: 6, MO: 0, TU: 1, WE: 2, TH: 3, FR: 4, SA: 5 };
+        function commit(e) {
+          if (!e.start) return;
+          const sum = (e.summary || "Event").trim();
+          const weekly = e.rrule && /FREQ=WEEKLY/i.test(e.rrule);
+          const bydayM = e.rrule && e.rrule.match(/BYDAY=([^;]+)/i);
+          if (weekly && (bydayM || e.start.hasTime)) {
+            let days = [];
+            if (bydayM) days = bydayM[1].split(",").map(s => map[s.trim().slice(-2).toUpperCase()]).filter(v => v != null);
+            if (!days.length) days = [(new Date(e.start.y, e.start.m - 1, e.start.d).getDay() + 6) % 7];
+            courses.push({ id: uid("c"), name: sum, code: "", color: PALETTE[ci++ % PALETTE.length], instructor: "", meetingDays: days, start: e.start.time || "", end: (e.end && e.end.time) || "", location: (e.location || "").trim(), syllabusTotal: 0, syllabusDone: 0 });
+          } else {
+            const low = sum.toLowerCase();
+            let type = "assignment";
+            if (/exam|final|midterm/.test(low)) type = "exam";
+            else if (/quiz/.test(low)) type = "exam";
+            else if (/read|chapter|ch\./.test(low)) type = "reading";
+            else if (/project/.test(low)) type = "project";
+            tasks.push({ id: uid("t"), title: sum, courseId: null, type: type, status: "todo", due: e.start.date, time: e.start.time || "", estHours: 0, notes: e.location ? "Location: " + e.location : "", completedAt: null });
+          }
+        }
+        for (const line of lines) {
+          if (line === "BEGIN:VEVENT") { ev = {}; continue; }
+          if (line === "END:VEVENT") { if (ev) commit(ev); ev = null; continue; }
+          if (!ev) continue;
+          const idx = line.indexOf(":"); if (idx < 0) continue;
+          const key = line.slice(0, idx).split(";")[0].toUpperCase();
+          const val = line.slice(idx + 1);
+          if (key === "SUMMARY") ev.summary = val;
+          else if (key === "LOCATION") ev.location = val;
+          else if (key === "DTSTART") ev.start = parseIcsDate(val);
+          else if (key === "DTEND") ev.end = parseIcsDate(val);
+          else if (key === "RRULE") ev.rrule = val;
+        }
+        return { courses: courses, tasks: tasks };
+      }
+      function importIcsFile(file) {
+        const r = new FileReader();
+        r.onload = () => {
+          try {
+            const res = parseIcs(r.result);
+            if (!res.courses.length && !res.tasks.length) { alert("No events (VEVENT) found in the .ics file."); return; }
+            res.courses.forEach(c => data.courses.push(c));
+            res.tasks.forEach(t => data.tasks.push(t));
+            saveData(); renderAll();
+            alert("Successfully imported " + res.courses.length + " courses and " + res.tasks.length + " tasks from the .ics file.\nPlease verify and assign courses to tasks if necessary.");
+          } catch (e) { alert("Failed to read the .ics file."); }
+        };
+        r.readAsText(file);
+      }
+
+      function tickClock() {
+        const n = new Date();
+        document.getElementById("clockTime").textContent = pad(n.getHours()) + ":" + pad(n.getMinutes()) + ":" + pad(n.getSeconds());
+      }
+
+      function wireEvents() {
+        document.getElementById("addTaskBtn").onclick = () => openTaskModal(null);
+        document.getElementById("addCourseBtn").onclick = () => openCourseModal(null);
+        document.getElementById("jsonInput").onchange = e => { if (e.target.files[0]) importJsonFile(e.target.files[0]); e.target.value = ""; };
+        document.getElementById("icsInput").onchange = e => { if (e.target.files[0]) importIcsFile(e.target.files[0]); e.target.value = ""; };
+        document.getElementById("modalCancel").onclick = hideModal;
+        document.getElementById("modalCancel2").onclick = hideModal;
+        modalEl().addEventListener("click", e => { if (e.target === modalEl()) hideModal(); });
+        document.addEventListener("keydown", e => { if (e.key === "Escape") hideModal(); });
+
+        document.querySelectorAll("#rangeSeg button").forEach(b => b.onclick = () => {
+          state.range = b.dataset.range;
+          document.querySelectorAll("#rangeSeg button").forEach(x => x.classList.toggle("on", x === b));
+          renderThroughput();
+        });
+        document.querySelectorAll("#alertSeg button").forEach(b => b.onclick = () => { state.sevFilter = b.dataset.sev; renderReminders(); });
+        document.querySelectorAll("#syllabusViewSeg button").forEach(b => b.onclick = () => {
+          state.syllabusView = b.dataset.view;
+          document.querySelectorAll("#syllabusViewSeg button").forEach(x => x.classList.toggle("on", x === b));
+          renderByCourse();
+        });
+        document.getElementById("searchInput").oninput = e => { state.query = e.target.value; renderTasks(); };
+        document.getElementById("statusSelect").onchange = e => { state.statusFilter = e.target.value; renderTasks(); };
+
+        let resizeT;
+        window.addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(renderThroughput, 150); });
+      }
+
+      async function init() {
+        const loaded = await loadData();
+        data = loaded && Array.isArray(loaded.courses) ? loaded : seed();
+        normalizeData();
+        document.getElementById("clockDate").textContent = new Date().toLocaleDateString("en-US", { weekday: "long", day: "2-digit", month: "2-digit", year: "numeric" });
+        tickClock();
+        setInterval(tickClock, 1000);
+        wireEvents();
+        renderAll();
+        updateStorageBadge();
+        setInterval(renderTopStatus, 60000);
+      }
+
+      init();
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const currentTheme = localStorage.getItem("sp:theme") || "default";
+        document.body.setAttribute("data-theme", currentTheme);
+
+        const currentFont = localStorage.getItem("sp:font") || "mono";
+        document.body.setAttribute("data-font", currentFont);
+
+        const settingsBtn = document.getElementById("settingsBtn");
+        if (settingsBtn) {
+          settingsBtn.addEventListener("click", openSettingsModal);
+        }
+      });
+      function openSettingsModal() {
+        const modal = document.getElementById("modal");
+        const modalTitle = document.getElementById("modalTitle");
+        const modalBody = document.getElementById("modalBody");
+        const modalSave = document.getElementById("modalSave");
+        const modalDelete = document.getElementById("modalDelete");
+        const modalCancel = document.getElementById("modalCancel");
+        const modalCancel2 = document.getElementById("modalCancel2");
+        modalTitle.innerText = "Preferences & Settings";
+        if (modalDelete) modalDelete.style.display = "none";
+        const curTheme = localStorage.getItem("sp:theme") || "default";
+        const curFont = localStorage.getItem("sp:font") || "mono";
+        const curTz = localStorage.getItem("sp:timezone") || "auto";
+        modalBody.innerHTML = `
+        <div class="form-grid">
+          <div class="field full">
+            <label>Color Theme</label>
+            <select id="setTheme">
+
+                <option value="default" ${curTheme === 'default' ? 'selected' : ''}>Default</option>
+                <option value="dark" ${curTheme === 'dark' ? 'selected' : ''}>Dark Academia</option>
+                <option value="matcha" ${curTheme === 'matcha' ? 'selected' : ''}>Matcha Green</option>
+                <option value="sakura" ${curTheme === 'sakura' ? 'selected' : ''}>Sakura Pink</option>
+                <option value="ocean" ${curTheme === 'ocean' ? 'selected' : ''}>Ocean Blue</option>
+                <option value="sunset" ${curTheme === 'sunset' ? 'selected' : ''}>Sunset Orange</option>
+                <option value="lavender" ${curTheme === 'lavender' ? 'selected' : ''}>Lavender Purple</option>
+                <option value="forest" ${curTheme === 'forest' ? 'selected' : ''}>Forest Green</option>
+                <option value="warm beige" ${curTheme === 'warm beige' ? 'selected' : ''}>Warm Beige</option>
+                <option value="contrast" ${curTheme === 'contrast' ? 'selected' : ''}>High Contrast</option>
+            </select>
+          </div>
+          <div class="field full" style="margin-top: 8px;">
+            <label>Font Style</label>
+            <select id="setFont">
+                <option value="mono" ${curFont === 'mono' ? 'selected' : ''}>Monospace (Default)</option>
+                <option value="sans" ${curFont === 'sans' ? 'selected' : ''}>Sans-serif (Modern)</option>
+                <option value="serif" ${curFont === 'serif' ? 'selected' : ''}>Serif (Classic)</option>
+                <option value="times" ${curFont === 'times' ? 'selected' : ''}>Times New Roman</option>
+                <option value="comic" ${curFont === 'comic' ? 'selected' : ''}>Comic Sans</option>
+                <option value="cursive" ${curFont === 'cursive' ? 'selected' : ''}>Cursive</option>
+                <option value="fantasy" ${curFont === 'fantasy' ? 'selected' : ''}>Fantasy</option>
+                <option value="georgia" ${curFont === 'georgia' ? 'selected' : ''}>Georgia</option>
+                <option value="helvetica" ${curFont === 'helvetica' ? 'selected' : ''}>Helvetica</option>
+                <option value="verdana" ${curFont === 'verdana' ? 'selected' : ''}>Verdana</option>
+            </select>
+          </div>
+          <div class="field full">
+    <label>Timezone</label>
+    <select id="timezoneSelect">
+        <option value="auto" ${curTz === 'auto' ? 'selected' : ''}>Automatic (Based on Device)</option>
+        <option value="Asia/Ho_Chi_Minh" ${curTz === 'Asia/Ho_Chi_Minh' ? 'selected' : ''}>UTC+07:00 (Vietnam)</option>
+        <option value="America/New_York" ${curTz === 'America/New_York' ? 'selected' : ''}>UTC-05:00 (New York)</option>
+        <option value="America/Los_Angeles" ${curTz === 'America/Los_Angeles' ? 'selected' : ''}>UTC-08:00 (Pacific Time)</option>
+        <option value="Europe/London" ${curTz === 'Europe/London' ? 'selected' : ''}>UTC+00:00 (London)</option>
+        <option value="Asia/Tokyo" ${curTz === 'Asia/Tokyo' ? 'selected' : ''}>UTC+09:00 (Tokyo)</option>
+        <option value="Asia/Shanghai" ${curTz === 'Asia/Shanghai' ? 'selected' : ''}>UTC+08:00 (Shanghai)</option>
+    </select>
+</div>
+          <div class="field full">
+            <label>Data & Template</label>
+            <div class="settings-actions">
+              <button class="btn ghost" id="importIcsBtn">Import calendar</button>
+              <button class="btn ghost" id="importJsonBtn">Import JSON</button>
+              <button class="btn ghost" id="exportJsonBtn">Export JSON</button>
+              <button class="btn ghost danger" id="resetBtn">Reset Template</button>
+            </div>
+          </div>
+        </div>
+      `;
+        document.getElementById("setTheme").onchange = (e) => document.body.setAttribute("data-theme", e.target.value);
+        document.getElementById("setFont").onchange = (e) => document.body.setAttribute("data-font", e.target.value);
+        document.getElementById("timezoneSelect").onchange = (e) => {
+          localStorage.setItem("sp:timezone", e.target.value);
+          if (typeof tickClock === "function") tickClock();
+        };
+        document.getElementById("exportJsonBtn").onclick = exportJson;
+        document.getElementById("importJsonBtn").onclick = () => document.getElementById("jsonInput").click();
+        document.getElementById("importIcsBtn").onclick = () => document.getElementById("icsInput").click();
+        document.getElementById("resetBtn").onclick = () => {
+          if (confirm("Delete all data and load sample data?")) {
+            data = { courses: [], tasks: [] };
+            normalizeData();
+            saveData();
+            renderAll();
+            modal.classList.remove("show");
+          }
+        };
+        modalSave.onclick = () => {
+          localStorage.setItem("sp:theme", document.getElementById("setTheme").value);
+          localStorage.setItem("sp:font", document.getElementById("setFont").value);
+          const selTz = document.getElementById("timezoneSelect").value;
+          localStorage.setItem("sp:timezone", selTz);
+          if (typeof tickClock === "function") tickClock();
+          modal.classList.remove("show");
+        };
+        const cancelAction = () => {
+          document.body.setAttribute("data-theme", curTheme);
+          document.body.setAttribute("data-font", curFont);
+          modal.classList.remove("show");
+        };
+        modalCancel.onclick = cancelAction;
+        modalCancel2.onclick = cancelAction;
+        modal.classList.add("show");
+      }
+    </script>
+    <script>
+      const mainView = document.getElementById('mainView');
+      const pomodoroView = document.getElementById('pomodoroView');
+      document.querySelector('.root').appendChild(pomodoroView);
+      function showView(v) {
+        const pomo = (v === 'pomodoro');
+        mainView.style.display = pomo ? 'none' : 'flex';
+        pomodoroView.style.display = pomo ? 'flex' : 'none';
+        document.getElementById('navPlanner').classList.toggle('active', !pomo);
+        document.getElementById('navPomodoro').classList.toggle('active', pomo);
+      }
+      document.getElementById('navPlanner').addEventListener('click', () => showView('planner'));
+      document.getElementById('navPomodoro').addEventListener('click', () => showView('pomodoro'));
+      document.getElementById('homeBtn').addEventListener('click', () => { window.location.href = 'index.html'; });
+      var navSettings2 = document.getElementById('navSettings2');
+      if (navSettings2) navSettings2.addEventListener('click', () => { if (typeof openSettingsModal === 'function') openSettingsModal(); });
+      showView(location.hash === '#pomodoro' ? 'pomodoro' : 'planner');
+      const pomoTime = document.getElementById('pomoTime');
+      const pomoLabel = document.getElementById('pomoLabel');
+      const pomoStartBtn = document.getElementById('pomoStartBtn');
+      const pomoPauseBtn = document.getElementById('pomoPauseBtn');
+      const pomoResetBtn = document.getElementById('pomoResetBtn');
+      const pomoWorkInput = document.getElementById('pomoWorkInput');
+      const pomoRestInput = document.getElementById('pomoRestInput');
+      let pomoTimer = null, pomoTimeLeft = 25 * 60, isPomoRunning = false, isWorkSession = true;
+      function updatePomoDisplay() {
+        const m = Math.floor(pomoTimeLeft / 60), s = pomoTimeLeft % 60;
+        pomoTime.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+      }
+      function switchSession() {
+        isWorkSession = !isWorkSession;
+        pomoLabel.textContent = isWorkSession ? 'Focus Session' : 'Rest Session';
+        pomoLabel.style.color = isWorkSession ? 'var(--gold-2)' : 'var(--cyan)';
+        const mins = isWorkSession ? parseInt(pomoWorkInput.value) : parseInt(pomoRestInput.value);
+        pomoTimeLeft = (isNaN(mins) || mins < 1 ? 25 : mins) * 60;
+        updatePomoDisplay();
+      }
+      pomoStartBtn.addEventListener('click', () => {
+        if (isPomoRunning) return;
+        isPomoRunning = true;
+        pomoTimer = setInterval(() => {
+          if (pomoTimeLeft > 0) { pomoTimeLeft--; updatePomoDisplay(); }
+          else {
+            clearInterval(pomoTimer); isPomoRunning = false;
+            try {
+              const ctx = new (window.AudioContext || window.webkitAudioContext)();
+              const osc = ctx.createOscillator(); const gainNode = ctx.createGain();
+              osc.connect(gainNode); gainNode.connect(ctx.destination);
+              osc.type = 'sine'; osc.frequency.setValueAtTime(800, ctx.currentTime);
+              gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+              osc.start(); osc.stop(ctx.currentTime + 0.3);
+            } catch (e) { }
+            switchSession();
+          }
+        }, 1000);
+      });
+      pomoPauseBtn.addEventListener('click', () => { isPomoRunning = false; clearInterval(pomoTimer); });
+      pomoResetBtn.addEventListener('click', () => {
+        isPomoRunning = false; clearInterval(pomoTimer); isWorkSession = true;
+        pomoLabel.textContent = 'Focus Session'; pomoLabel.style.color = 'var(--gold-2)';
+        pomoTimeLeft = (parseInt(pomoWorkInput.value) || 25) * 60; updatePomoDisplay();
+      });
+      [pomoWorkInput, pomoRestInput].forEach(inp => {
+        inp.addEventListener('change', () => {
+          if (!isPomoRunning) {
+            const mins = isWorkSession ? parseInt(pomoWorkInput.value) : parseInt(pomoRestInput.value);
+            pomoTimeLeft = (isNaN(mins) || mins < 1 ? 25 : mins) * 60; updatePomoDisplay();
+          }
+        });
+      });
+      const pomoTaskInput = document.getElementById('pomoTaskInput');
+      const pomoTaskAddBtn = document.getElementById('pomoTaskAddBtn');
+      const pomoTaskList = document.getElementById('pomoTaskList');
+      function addPomoTask(text) {
+        if (!text.trim()) return;
+        const div = document.createElement('div'); div.className = 'pomo-task-item';
+        const cb = document.createElement('input'); cb.type = 'checkbox';
+        cb.addEventListener('change', () => div.classList.toggle('done', cb.checked));
+        const span = document.createElement('span'); span.textContent = text;
+        span.style.fontFamily = 'var(--sans)'; span.style.fontSize = '13.5px'; span.style.flex = '1';
+        const del = document.createElement('button'); del.className = 'del-btn'; del.innerHTML = '&times;';
+        del.style.background = 'none'; del.style.border = 'none'; del.style.cursor = 'pointer';
+        del.addEventListener('click', () => div.remove());
+        div.appendChild(cb); div.appendChild(span); div.appendChild(del);
+        pomoTaskList.appendChild(div); pomoTaskInput.value = '';
+      }
+      pomoTaskAddBtn.addEventListener('click', () => addPomoTask(pomoTaskInput.value));
+      pomoTaskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addPomoTask(pomoTaskInput.value); });
+    </script>
+</body>
+
+</html>
