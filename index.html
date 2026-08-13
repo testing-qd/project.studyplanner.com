@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Room</title>
   <style>
+    /* ---- tokens: identical set to Study Planner so both files scale the same ---- */
     :root {
       --bg: #F4F5F7;
       --bg-glow: rgba(0, 82, 204, 0.04);
@@ -224,17 +225,8 @@
     body {
       margin: 0;
       padding: 0;
-    }
-
-    body {
       background: var(--bg);
       transition: background 0.3s ease, color 0.3s ease;
-    }
-
-    body.no-anim,
-    body.no-anim * {
-      transition: none !important;
-      animation: none !important;
     }
 
     /* ---- shell: same padding, gap and rhythm as the planner ---- */
@@ -261,7 +253,7 @@
       flex-wrap: wrap;
       border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 12px 18px;
+      padding: 14px 18px;
       background: linear-gradient(135deg, var(--bg-glow), transparent), var(--surface);
       transition: background 0.3s ease, border-color 0.3s ease;
     }
@@ -269,16 +261,16 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 13px;
     }
 
     .brand-mark {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
       display: grid;
       place-items: center;
-      font-size: 20px;
+      font-size: 21px;
       color: var(--text-on-primary);
       background: linear-gradient(135deg, var(--gold), var(--gold-2));
       box-shadow: 0 0 20px var(--bg-glow);
@@ -286,7 +278,7 @@
 
     .brand-name {
       font-size: 17px;
-      font-weight: 800;
+      font-weight: 700;
       letter-spacing: .01em;
     }
 
@@ -646,8 +638,25 @@
       cursor: grab;
     }
 
-    .furni.picked {
+    .furni.picked,
+    .window-vis.wpicked {
       filter: drop-shadow(0 0 2px var(--cyan)) drop-shadow(0 0 6px var(--cyan));
+    }
+
+    .window {
+      cursor: pointer;
+    }
+
+    .wallcell {
+      cursor: pointer;
+    }
+
+    .wallcell.ok {
+      fill: rgba(120, 190, 120, 0.30) !important;
+    }
+
+    .wallcell.bad {
+      fill: rgba(210, 120, 110, 0.30) !important;
     }
 
     .furni:hover {
@@ -1105,6 +1114,7 @@
       color: var(--text);
     }
 
+    /* ---- modal: planner metrics ---- */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -1129,7 +1139,6 @@
       border: 1px solid var(--line);
       border-radius: 14px;
       padding: 18px;
-      font-family: var(--mono);
     }
 
     .modal-head {
@@ -1219,22 +1228,16 @@
 </head>
 
 <body>
-  <script>
-    (function () {
-      try {
-        document.body.setAttribute("data-theme", localStorage.getItem("sp:theme") || "default");
-        document.body.setAttribute("data-font", localStorage.getItem("sp:font") || "mono");
-      } catch (e) { }
-      document.body.classList.add("no-anim");
-      addEventListener("load", function () {
-        requestAnimationFrame(function () { document.body.classList.remove("no-anim"); });
-      });
-    })();
-  </script>
   <div class="root">
     <header class="topbar">
       <div class="brand">
-        <div class="brand-mark">🏠</div>
+        <div class="brand-mark" style="color:#fff">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z" />
+            <path d="M9.5 21v-6h5v6" />
+          </svg>
+        </div>
         <div>
           <div class="brand-name">My Room</div>
         </div>
@@ -1290,6 +1293,9 @@
         </div>
       </div>
       <div class="shop-grid" id="shopItems"></div>
+      <div class="sub">Windows <span style="text-transform:none;letter-spacing:0;color:var(--muted2)">· click a wall
+          tile to place</span></div>
+      <div class="shop-grid" id="windowItems"></div>
       <div class="style-row">
         <div>
           <div class="sub">Floor style</div>
@@ -1410,6 +1416,17 @@
       { id: "bed", name: "Bed", cost: 4, color: "#6C88B0", top: 38, w: 2, d: 2 },
       { id: "tv", name: "TV", cost: 5, color: "#3C3C3C", top: 48, w: 2, d: 1 }
     ];
+    // ===== window styles (mounted on walls, not the floor) =====
+    // Each is drawn on a 1x1 wall cell in local coords: a=across (0..1), h=height up the wall (0..1).
+    const WINDOWS = [
+      { id: "classic", name: "Classic", cost: 1 },
+      { id: "arched", name: "Arched", cost: 2 },
+      { id: "cottage", name: "Cottage", cost: 2 },
+      { id: "round", name: "Porthole", cost: 2 },
+      { id: "bay", name: "Bay", cost: 3 },
+      { id: "modern", name: "Panorama", cost: 3 }
+    ];
+
     const ACHIEVEMENTS = [
       { id: "first", emoji: "🌱", name: "Getting started", desc: "Place your first piece of furniture.", test: (s) => s.placed.length >= 1 },
       { id: "cozy", emoji: "🛋️", name: "Cozy corner", desc: "Place 5 pieces of furniture.", test: (s) => s.placed.length >= 5 },
@@ -1426,7 +1443,10 @@
       skinsOwned: { floor: ["wood"], wall: ["cream"] },
       achievements: {}, selected: null, rotated: false,
       picked: null,        // index of the placed piece the user has clicked
-      moving: null         // index of the piece waiting for a new tile
+      moving: null,        // index of the piece waiting for a new tile
+      windows: [],         // { style, wall:0..3, u:0..GRID-1 } — u is the tile along that wall
+      pickedWin: null,     // index of the selected window
+      movingWin: null      // index of a window waiting for a new wall cell
     };
     let carry = null;                              // piece being dragged, from the shop or the room
     let swallowClick = false;                      // a finished drag must not also count as a click
@@ -1464,7 +1484,7 @@
     }
 
     async function saveGame() {
-      const persist = { placed: state.placed, floor: state.floor, wall: state.wall, skinsOwned: state.skinsOwned, achievements: state.achievements, yaw: yaw };
+      const persist = { placed: state.placed, windows: state.windows, floor: state.floor, wall: state.wall, skinsOwned: state.skinsOwned, achievements: state.achievements, yaw: yaw };
       const s = JSON.stringify(persist);
       try { await idbSet(GAME_DB, GAME_KEY, s); return; } catch (e) { }
       try { if (typeof localStorage !== "undefined") { localStorage.setItem(GAME_KEY, s); return; } } catch (e) { }
@@ -1488,6 +1508,7 @@
         if (state.skinsOwned.floor.indexOf("wood") < 0) state.skinsOwned.floor.push("wood");
         if (state.skinsOwned.wall.indexOf("cream") < 0) state.skinsOwned.wall.push("cream");
         state.achievements = d.achievements || {};
+        state.windows = (Array.isArray(d.windows) ? d.windows : []).filter(w => WINDOWS.some(x => x.id === w.style) && w.wall >= 0 && w.wall < 4 && w.u >= 0 && w.u < GRID);
         yaw = isFinite(d.yaw) ? d.yaw : 0;
         sanitizePlaced();
       } catch (e) { }
@@ -1876,6 +1897,7 @@
       const earned = devBudget === null ? studyHours + STARTER_HOURS : devBudget;
       let spent = 0;
       state.placed.forEach(p => { const d = FURN.find(f => f.id === p.id); if (d) spent += d.cost; });
+      state.windows.forEach(win => { const d = WINDOWS.find(x => x.id === win.style); if (d) spent += d.cost; });
       ["floor", "wall"].forEach(kind => {
         const set = kind === "floor" ? FLOORS : WALLS;
         state.skinsOwned[kind].forEach(id => { if (set[id]) spent += set[id].cost; });
@@ -1883,25 +1905,268 @@
       return { earned, spent, available: earned - spent };
     }
 
-    // ===== room render =====
+    // ===== walls & windows =====
+    // The four walls, each as a base edge a->b (length GRID) and an outward normal.
+    const WALLS_GEO = [
+      { a: [0, 0], b: [GRID, 0], n: [0, -1] },
+      { a: [GRID, 0], b: [GRID, GRID], n: [1, 0] },
+      { a: [GRID, GRID], b: [0, GRID], n: [0, 1] },
+      { a: [0, GRID], b: [0, 0], n: [-1, 0] }
+    ];
+    // A wall is visible (drawn) only when it faces away from the camera.
+    const wallVisible = w => dirDepth(WALLS_GEO[w].n[0], WALLS_GEO[w].n[1]) < 0;
+
+    // Point on wall `w`: `across` runs 0..GRID along the base, `up` is height in px.
+    function wallPt(w, across, up) {
+      const g = WALLS_GEO[w], t = across / GRID;
+      const x = g.a[0] + (g.b[0] - g.a[0]) * t, y = g.a[1] + (g.b[1] - g.a[1]) * t;
+      return isoPt(x, y, up);
+    }
+    // Screen-space basis for one wall cell (tile `u`). Local coords a,h in [0..1] map
+    // into a window-sized sub-rectangle of the cell: nearly full tile width, and a band
+    // in the upper-middle of the wall's height. This keeps proportions sane on a tall,
+    // narrow (TW×WALL_H) cell, so a "square-looking" window reads as square.
+    const WIN_A0 = 0.04, WIN_A1 = 0.96;            // across span within the tile
+    const WIN_H0 = 0.30, WIN_H1 = 0.90;            // height span up the wall (0 = floor)
+    let winSpan = 1;                               // tiles the current window covers (for bar thickness)
+
+    // C for an arbitrary across-band [aLo..aHi] (wall coords 0..GRID) and the height band.
+    // a in [0..1] runs across the band, h in [0..1] up the window.
+    function wallBand(w, aLo, aHi) {
+      const o = wallPt(w, aLo, 0), ax = wallPt(w, aHi, 0), top = wallPt(w, aLo, WALL_H);
+      const ex = [ax[0] - o[0], ax[1] - o[1]], ey = [top[0] - o[0], top[1] - o[1]];
+      return (a, h) => {
+        const H = WIN_H0 + (WIN_H1 - WIN_H0) * h;
+        return [o[0] + ex[0] * a + ey[0] * H, o[1] + ex[1] * a + ey[1] * H];
+      };
+    }
+    function wallCell(w, u) { return { pt: wallBand(w, u + WIN_A0, u + WIN_A1) }; }
+
+    // Window art. `C` maps local (across 0..1, up 0..1) -> screen point.
+    // Windows sit in the upper-middle of the wall; frame colour keys off the wall.
+    const WIN_DRAW = {
+      // 1) Classic double-hung: rectangular, 2x2 panes, sill + lintel
+      classic(C, fr, gl) {
+        let s = frameRect(C, .10, .10, .90, .92, fr, gl);
+        s += bar(C, .50, .12, .50, .90, fr, 3.2);                  // vertical mullion
+        s += bar(C, .12, .51, .88, .51, fr, 3.2);                  // horizontal mullion
+        s += glint(C, .14, .14, .44, .44);
+        s += sill(C, .06, .10, .94, fr) + lintel(C, .08, .92, .92, fr);
+        return s;
+      },
+      // 2) Arched: round-top single sash with a keystone feel
+      arched(C, fr, gl) {
+        let s = archShape(C, .12, .88, .94, .52, .10, fr);         // outer (frame)
+        s += archShape(C, .17, .83, .90, .54, .14, gl);            // inner (glass)
+        s += bar(C, .50, .14, .50, .72, fr, 2.6);
+        s += bar(C, .17, .54, .83, .54, fr, 2.6);
+        s += glint(C, .20, .16, .44, .40);
+        s += sill(C, .08, .10, .92, fr);
+        return s;
+      },
+      // 3) Cottage: wide, 3x2 small panes, chunky white frame
+      cottage(C, fr, gl) {
+        let s = frameRect(C, .06, .14, .94, .88, fr, gl);
+        for (let i = 1; i < 3; i++) s += bar(C, .06 + .88 * i / 3, .16, .06 + .88 * i / 3, .86, fr, 2.4);
+        s += bar(C, .08, .51, .92, .51, fr, 2.4);
+        s += glint(C, .10, .18, .34, .44);
+        s += sill(C, .02, .14, .98, fr) + lintel(C, .04, .88, .96, shade(fr, 1.08));
+        return s;
+      },
+      // 4) Porthole: round window, cross bars, rivets
+      round(C, fr, gl) {
+        const cx = .5, cy = .5, R = .40;
+        let s = disc(C, cx, cy, R + .05, fr) + disc(C, cx, cy, R, shade(fr, .82)) + disc(C, cx, cy, R - .045, gl);
+        s += bar(C, cx - R + .05, cy, cx + R - .05, cy, fr, 2.4) + bar(C, cx, cy - R + .05, cx, cy + R - .05, fr, 2.4);
+        s += discGlint(C, cx, cy, R - .08);
+        [[0, -1], [0, 1], [-1, 0], [1, 0]].forEach(d => s += dotAt(C, cx + d[0] * (R + .02), cy + d[1] * (R + .02), fr));
+        return s;
+      },
+      // 5) Bay: three panes, the centre one pushed out (wider), a base shelf
+      bay(C, fr, gl) {
+        let s = poly([C(.06, .16), C(.94, .16), C(.86, .88), C(.14, .88)], fr);          // splayed frame
+        s += glassQuad(C, .10, .19, .30, .85, shade(gl, .90));
+        s += poly([C(.32, .19), C(.68, .19), C(.66, .85), C(.34, .85)], gl);             // centre pane, proud
+        s += glassQuad(C, .70, .19, .90, .85, shade(gl, .86));
+        s += bar(C, .31, .18, .33, .86, fr, 2.6) + bar(C, .67, .18, .69, .86, fr, 2.6);
+        s += glint(C, .36, .22, .62, .50);
+        s += poly([C(.14, .88), C(.86, .88), C(.92, .96), C(.08, .96)], shade(fr, .72));   // sill shelf
+        s += lintel(C, .06, .16, .94, fr);
+        return s;
+      },
+      // 6) Panorama: wide, thin dark frame, two slim mullions, big sheen
+      modern(C, fr, gl) {
+        const dk = shade(fr, .55);
+        let s = poly([C(.04, .16), C(.96, .16), C(.96, .86), C(.04, .86)], dk);
+        s += glassQuad(C, .075, .19, .925, .83, gl);
+        s += bar(C, .36, .19, .36, .83, dk, 2.2) + bar(C, .64, .19, .64, .83, dk, 2.2);
+        s += poly([C(.075, .19), C(.42, .19), C(.20, .83), C(.075, .83)], "rgba(255,255,255,0.12)");
+        return s;
+      }
+    };
+
+    // wall-drawing primitives — all take C(a,h) in wall-local coords and emit
+    // screen-space SVG. Bars are thin quads (in wall space) so they shear with the wall.
+    const _pts = (C, arr) => arr.map(p => C(p[0], p[1]));
+    function glassQuad(C, a0, h0, a1, h1, gl) { return poly([C(a0, h0), C(a1, h0), C(a1, h1), C(a0, h1)], gl); }
+    function bar(C, a0, h0, a1, h1, col, w) {
+      const t = (w || 2) / 300;                                   // half-thickness in wall units
+      if (Math.abs(a1 - a0) < Math.abs(h1 - h0)) {             // mostly vertical -> offset across
+        const tt = t / winSpan;                            // keep real thickness across a wide merge
+        return poly([C(a0 - tt, h0), C(a1 - tt, h1), C(a1 + tt, h1), C(a0 + tt, h0)], col);
+      }
+      return poly([C(a0, h0 - t * 2), C(a1, h1 - t * 2), C(a1, h1 + t * 2), C(a0, h0 + t * 2)], col);   // horizontal -> offset up
+    }
+    function frameRect(C, a0, h0, a1, h1, fr, gl) {
+      return poly([C(a0, h0), C(a1, h0), C(a1, h1), C(a0, h1)], fr)
+        + glassQuad(C, a0 + .03, h0 + .03, a1 - .03, h1 - .03, gl);
+    }
+    function sill(C, a0, h, a1, col) { return poly([C(a0 - .02, h), C(a1 + .02, h), C(a1 + .04, h - .05), C(a0 - .04, h - .05)], shade(col, .72)); }
+    function lintel(C, a0, h, a1, col) { return poly([C(a0, h), C(a1, h), C(a1, h + .05), C(a0, h + .05)], shade(col, 1.05)); }
+    function archShape(C, a0, a1, htop, hspring, hbot, col) {
+      const cx = (a0 + a1) / 2, N = 12, pts = [[a0, hbot], [a0, hspring]];
+      for (let i = 0; i <= N; i++) { const t = i / N, a = a0 + (a1 - a0) * t; const h = hspring + (htop - hspring) * Math.sin(Math.PI * t); pts.push([a, h]); }
+      pts.push([a1, hspring], [a1, hbot]);
+      return poly(_pts(C, pts), col);
+    }
+    function glint(C, a0, h0, a1, h1) { return poly([C(a0, h0), C(a1, h0), C(a0, h1)], "rgba(255,255,255,0.14)"); }
+    function ellipseA(C, cx, cy, Rx, Ry, col) {
+      const pts = []; const N = 26;
+      for (let i = 0; i < N; i++) { const a = 2 * Math.PI * i / N; pts.push([cx + Rx * Math.cos(a), cy + Ry * Math.sin(a)]); }
+      return poly(_pts(C, pts), col);
+    }
+    function disc(C, cx, cy, R, col) {
+      const pts = []; const N = 20;
+      for (let i = 0; i < N; i++) { const a = 2 * Math.PI * i / N; pts.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); }
+      return poly(_pts(C, pts), col);
+    }
+    function discGlint(C, cx, cy, R) { const pts = []; for (let i = 0; i <= 8; i++) { const a = Math.PI * (0.9 + 0.6 * i / 8); pts.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); } pts.push([cx, cy]); return poly(_pts(C, pts), "rgba(255,255,255,0.12)"); }
+    function dotAt(C, a, h, col) { const p = C(a, h); return '<circle cx="' + n1(p[0]) + '" cy="' + n1(p[1]) + '" r="2" fill="' + shade(col, .7) + '"/>'; }
+
+    // draw every window that sits on a currently-visible wall
+    // transparent hit polygons over each visible wall cell — only emitted when the
+    // user is choosing where a window goes, so they never block room rotation otherwise
+    function wallCellsSVG() {
+      if (!wallPlacing()) return "";
+      let s = "";
+      for (let w = 0; w < 4; w++) {
+        if (!wallVisible(w)) continue;
+        for (let u = 0; u < GRID; u++) {
+          const o = wallPt(w, u, 0), ax = wallPt(w, u + 1, 0), top = wallPt(w, u, WALL_H), topx = wallPt(w, u + 1, WALL_H);
+          const occupied = state.windows.some(win => win.wall === w && win.u === u);
+          s += '<polygon class="wallcell" data-cw="' + w + '" data-cu="' + u + '"'
+            + ' points="' + P([o, ax, topx, top]) + '" fill="transparent"'
+            + (occupied ? ' data-occ="1"' : '') + '/>';
+        }
+      }
+      return s;
+    }
+    // are we mid-window-action? (a window style selected in the shop, or one picked)
+    function wallPlacing() {
+      return (state.selected && WINDOWS.some(x => x.id === state.selected))
+        || state.movingWin != null;
+    }
+
+    // Merged window: one continuous window spanning L adjacent same-style tiles.
+    // C maps a in [0..1] across the whole run; winSpan is set to L so bar() stays thin.
+    function winMerge(style, C, L, fr, gl) {
+      const cols = ({ classic: 2, cottage: 3, modern: 3, bay: 3, arched: 2, round: 1 })[style] || 2;
+      const seams = (top, bot, th) => {
+        let s = "";
+        for (let i = 1; i < cols * L; i++) { const a = i / (cols * L); s += bar(C, a, top, a, bot, fr, th); }
+        return s;
+      };
+      if (style === "round") {
+        const cx = .5, cy = .5, Rx = .47, Ry = .42, bx = .02 / L;
+        let s = ellipseA(C, cx, cy, Rx + bx, Ry + .03, fr) + ellipseA(C, cx, cy, Rx, Ry, shade(fr, .82)) + ellipseA(C, cx, cy, Rx - bx, Ry - .03, gl);
+        s += bar(C, .05, cy, .95, cy, fr, 2.4);
+        for (let i = 1; i < L; i++) { const a = i / L; s += bar(C, a, cy - Ry + .05, a, cy + Ry - .05, fr, 2.4); }
+        s += discGlint(C, cx, cy, Ry - .04);
+        return s;
+      }
+      if (style === "arched") {
+        let s = archShape(C, .04, .96, .98, .52, .10, fr);
+        s += archShape(C, .07, .93, .93, .55, .13, gl);
+        s += bar(C, .07, .55, .93, .55, fr, 2.4);
+        for (let i = 1; i < L; i++) { const a = i / L; s += bar(C, a, .14, a, .74, fr, 2.4); }
+        s += glint(C, .10, .16, .34, .42);
+        s += sill(C, .02, .10, .98, fr);
+        return s;
+      }
+      const dark = style === "modern";
+      const top = dark ? .14 : .10, bot = dark ? .86 : .90;
+      const frameCol = dark ? shade(fr, .55) : fr, bx = .02 / L;
+      let s = poly([C(.02, top), C(.98, top), C(.98, bot), C(.02, bot)], frameCol);
+      s += glassQuad(C, .02 + bx, top + .03, .98 - bx, bot - .03, gl);
+      if (style === "classic" || style === "cottage") s += bar(C, .03, .5, .97, .5, fr, 2.6);
+      s += seams(top + .02, bot - .02, dark ? 2.2 : 2.6);
+      s += glint(C, .03, top + .03, .26, .5);
+      if (!dark) { s += sill(C, .0, top, 1.0, fr); s += lintel(C, .02, bot, .98, shade(fr, 1.05)); }
+      if (style === "bay") s += poly([C(.05, bot), C(.95, bot), C(.99, bot + .06), C(.01, bot + .06)], shade(fr, .7));
+      return s;
+    }
+
+    // consecutive same-style windows on the same wall, as runs [{wall,style,tiles:[{u,i}]}]
+    function windowRuns() {
+      const groups = {};
+      state.windows.forEach((w, i) => {
+        if (!wallVisible(w.wall)) return;
+        (groups[w.wall + "|" + w.style] = groups[w.wall + "|" + w.style] || []).push({ u: w.u, i: i, style: w.style, wall: w.wall });
+      });
+      const runs = [];
+      Object.keys(groups).forEach(k => {
+        const list = groups[k].sort((a, b) => a.u - b.u);
+        let cur = [list[0]];
+        for (let j = 1; j < list.length; j++) {
+          if (list[j].u === list[j - 1].u + 1) cur.push(list[j]);
+          else { runs.push(cur); cur = [list[j]]; }
+        }
+        runs.push(cur);
+      });
+      return runs;
+    }
+
+    function windowsSVG() {
+      const wl = WALLS[state.wall];
+      const frame = shade(wl.right, 0.66), glass = "#BFE0F2";
+      let s = "";
+      windowRuns().forEach(run => {
+        const wall = run[0].wall, style = run[0].style;
+        const u0 = run[0].u, u1 = run[run.length - 1].u, L = u1 - u0 + 1;
+        const picked = run.some(m => m.i === state.pickedWin);
+        if (L === 1) {                                   // a lone window keeps its tuned single art
+          winSpan = 1;
+          const C = wallBand(wall, u0 + WIN_A0, u0 + WIN_A1);
+          const fn = WIN_DRAW[style] || WIN_DRAW.classic;
+          s += '<g class="window-vis' + (picked ? " wpicked" : "") + '" style="pointer-events:none">' + fn(C, frame, glass) + '</g>';
+        } else {                                         // 2+ adjacent tiles merge into one big window
+          winSpan = L;
+          const C = wallBand(wall, u0 + WIN_A0, u1 + WIN_A1);
+          s += '<g class="window-vis' + (picked ? " wpicked" : "") + '" style="pointer-events:none">' + winMerge(style, C, L, frame, glass) + '</g>';
+          winSpan = 1;
+        }
+        // transparent per-tile hit targets so each section can still be selected/removed
+        run.forEach(m => {
+          const q = [wallPt(wall, m.u, WALL_H * WIN_H0), wallPt(wall, m.u + 1, WALL_H * WIN_H0), wallPt(wall, m.u + 1, WALL_H * WIN_H1), wallPt(wall, m.u, WALL_H * WIN_H1)];
+          s += '<polygon class="window" data-w="' + m.i + '" fill="transparent" points="' + P(q) + '"/>';
+        });
+      });
+      winSpan = 1;
+      return s;
+    }
     function roomSVG() {
       const floor = FLOORS[state.floor], wall = WALLS[state.wall];
       let s = "";
-
-      // Only the walls facing away from the camera are drawn, so the room stays open
-      // toward the viewer at every angle. Which two those are changes as you turn.
-      const EDGES = [
-        { a: [0, 0], b: [GRID, 0], n: [0, -1] },
-        { a: [GRID, 0], b: [GRID, GRID], n: [1, 0] },
-        { a: [GRID, GRID], b: [0, GRID], n: [0, 1] },
-        { a: [0, GRID], b: [0, 0], n: [-1, 0] }
-      ];
-      EDGES.forEach(e => {
+      WALLS_GEO.forEach(e => {
         if (dirDepth(e.n[0], e.n[1]) >= 0) return;                 // that wall is in front of us
         const b0 = isoPt(e.a[0], e.a[1], 0), b1 = isoPt(e.b[0], e.b[1], 0);
         const fill = dirSide(e.n[0], e.n[1]) > 0 ? wall.right : wall.left;
         s += '<polygon points="' + P([b0, b1, [b1[0], b1[1] - WALL_H], [b0[0], b0[1] - WALL_H]]) + '" fill="' + fill + '"/>';
       });
+
+      // windows are painted onto the walls, before floor and furniture
+      s += windowsSVG();
+      s += wallCellsSVG();
 
       // Tiles keep MODEL coords in their data attributes, so placement, collision and
       // the hover preview never need to know the room has been turned.
@@ -2019,6 +2284,14 @@
     function renderRoom() { document.getElementById("stage").innerHTML = roomSVG(); }
     function renderPieceActions() {
       const el = document.getElementById("pieceActions");
+      if (state.pickedWin !== null && state.windows[state.pickedWin]) {
+        el.hidden = false;
+        el.innerHTML =
+          '<button class="btn' + (state.movingWin !== null ? " primary" : "") + '" data-wact="move">✥ Move</button>'
+          + '<button class="btn danger" data-wact="remove">🗑 Remove</button>'
+          + '<button class="btn ghost" data-wact="done">Done</button>';
+        return;
+      }
       const it = state.picked !== null ? state.placed[state.picked] : null;
       if (!it) { el.hidden = true; el.innerHTML = ""; return; }
       el.hidden = false;
@@ -2039,6 +2312,21 @@
         h.innerHTML = state.moving !== null
           ? 'Moving <b>' + hd.name + '</b> — click an empty tile to drop it there, or click the piece again to cancel.'
           : 'Selected <b>' + hd.name + '</b> — turn it, drag it to another tile, or remove it (the hours come back).';
+        return;
+      }
+      const heldWin = state.pickedWin !== null ? state.windows[state.pickedWin] : null;
+      if (heldWin) {
+        const wd = WINDOWS.find(x => x.id === heldWin.style);
+        rb.style.display = "none";
+        h.innerHTML = state.movingWin !== null
+          ? 'Moving the <b>' + wd.name + '</b> window — click another wall tile, or click it again to cancel.'
+          : 'Selected the <b>' + wd.name + '</b> window — move it to another wall tile or remove it (hours refunded).';
+        return;
+      }
+      if (state.selected && WINDOWS.some(x => x.id === state.selected)) {
+        const wd = WINDOWS.find(x => x.id === state.selected);
+        rb.style.display = "none";
+        h.innerHTML = 'Placing the <b>' + wd.name + '</b> window (' + wd.cost + 'h) — click any highlighted wall tile. Turn the room to reach the other walls.';
         return;
       }
       if (state.selected) {
@@ -2077,6 +2365,22 @@
       };
       document.getElementById("floorSkins").innerHTML = Object.keys(FLOORS).map(id => chip("floor", id)).join("");
       document.getElementById("wallSkins").innerHTML = Object.keys(WALLS).map(id => chip("wall", id)).join("");
+      document.getElementById("windowItems").innerHTML = WINDOWS.map(w => {
+        const sel = state.selected === w.id, afford = w.cost <= av;
+        return '<button class="item' + (sel ? " sel" : "") + (afford ? "" : " poor") + '" data-win="' + w.id + '">'
+          + '<span class="item-icon" style="width:34px">' + windowIcon(w.id) + '</span>'
+          + '<span class="item-name">' + w.name + '</span>'
+          + '<span class="item-cost">' + w.cost + 'h</span></button>';
+      }).join("");
+    }
+
+    // a small standalone SVG of a window, for the shop row
+    function windowIcon(style) {
+      const W = 46, H = 40, pad = 4;
+      const C = (a, h) => [pad + a * (W - 2 * pad), H - pad - h * (H - 2 * pad)];
+      const fn = WIN_DRAW[style] || WIN_DRAW.classic;
+      return '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg">'
+        + fn(C, "#8A7B66", "#BFE0F2") + '</svg>';
     }
     function renderAchievements() {
       const unlocked = ACHIEVEMENTS.filter(a => state.achievements[a.id]).length;
@@ -2276,18 +2580,54 @@
           + '<div class="caution" style="margin-top:0"><b>How the budget works:</b> your balance is the '
           + '<b>estimated hours</b> of every task marked <b>Done</b> in Study Planner, plus a small starter bonus. '
           + 'Furniture and room styles cost hours, and removing a piece refunds it \u2014 rearranging is free.</div>'
+          + '<div class="caution"><b>Storage:</b> the two pages share data only when opened from the same address. '
+          + 'Serve the folder with <code>python3 -m http.server</code> and open <code>http://localhost:8000/</code>; '
+          + 'opened straight as a <code>file://</code> they may not share storage.</div>';
       }
       document.getElementById("settingsPane").innerHTML = h;
     }
 
     function renderAll() { renderCoins(); renderTopStatus(); renderRoom(); renderHint(); renderPieceActions(); renderShop(); renderSettings(); }
 
+    // ===== actions =====
     function afterChange() { saveGame(); renderAll(); checkAchievements(); }
     function selectItem(id) {
       state.selected = (state.selected === id) ? null : id;
       state.picked = null; state.moving = null;
+      state.pickedWin = null; state.movingWin = null;
       if (!state.selected) state.rotated = 0;
-      renderHint(); renderShop();
+      renderHint(); renderRoom(); renderShop();
+    }
+
+    // ----- window actions -----
+    function placeWindow(w, u) {
+      const d = WINDOWS.find(x => x.id === state.selected); if (!d) return;
+      if (!wallVisible(w)) { toast("Turn the room so that wall faces you, then place the window."); return; }
+      if (state.windows.some(win => win.wall === w && win.u === u)) { toast("There is already a window on that wall tile."); return; }
+      if (d.cost > budget().available) { toast("Not enough hours for that window."); return; }
+      state.windows.push({ style: d.id, wall: w, u: u });
+      afterChange();
+    }
+    function pickWindow(i) {
+      state.pickedWin = (i === state.pickedWin) ? null : i;
+      state.movingWin = null;
+      if (state.pickedWin !== null) { state.selected = null; state.picked = null; state.moving = null; }
+      afterChange();
+    }
+    function removeWindow(i) {
+      if (i >= 0 && i < state.windows.length) {
+        state.windows.splice(i, 1);
+        state.pickedWin = null; state.movingWin = null;
+        afterChange();
+      }
+    }
+    function relocateWindow(i, w, u) {
+      if (i < 0 || i >= state.windows.length) return;
+      if (!wallVisible(w)) { toast("That wall is turned away — spin the room to face it."); return; }
+      if (state.windows.some((win, j) => j !== i && win.wall === w && win.u === u)) { toast("That wall tile is taken."); return; }
+      state.windows[i].wall = w; state.windows[i].u = u;
+      state.movingWin = null; state.pickedWin = i;
+      afterChange();
     }
     const TAU = Math.PI * 2;
     let yawSaveT;
@@ -2296,7 +2636,7 @@
       if (yaw < 0) yaw += TAU;
       renderRoom();
       clearTimeout(yawSaveT);
-      yawSaveT = setTimeout(saveGame, 400);
+      yawSaveT = setTimeout(saveGame, 400);          // don't hammer storage while dragging
     }
     function rotateSelection() {
       if (!state.selected) return;
@@ -2490,6 +2830,19 @@
         if (swallowClick) { swallowClick = false; return; }   // that was a drag
         const furni = e.target.closest(".furni");
         const tile = e.target.closest(".tile");
+        const cell = e.target.closest(".wallcell");
+        const win = e.target.closest(".window");
+        // --- windows take priority while a window action is in progress ---
+        if (state.movingWin !== null) {
+          if (cell) relocateWindow(state.movingWin, +cell.dataset.cw, +cell.dataset.cu);
+          else if (win && +win.dataset.w === state.movingWin) { state.movingWin = null; afterChange(); }
+          return;
+        }
+        if (state.selected && WINDOWS.some(x => x.id === state.selected)) {   // placing a new window
+          if (cell) placeWindow(+cell.dataset.cw, +cell.dataset.cu);
+          return;
+        }
+        if (win) { pickWindow(+win.dataset.w); return; }       // select an existing window
         if (state.moving !== null) {                          // armed by the Move button
           if (furni && +furni.dataset.i === state.moving) { state.moving = null; afterChange(); return; }
           if (tile) relocate(state.moving, +tile.dataset.c, +tile.dataset.r);
@@ -2498,14 +2851,16 @@
         if (furni) { pickPiece(+furni.dataset.i); return; }    // select it, offer the options
         if (!tile) return;
         if (state.selected) { placeAt(+tile.dataset.c, +tile.dataset.r); return; }
-        if (state.picked !== null) pickPiece(null);            // click bare floor to deselect
+        if (state.picked !== null) { pickPiece(null); return; }
+        if (state.pickedWin !== null) pickWindow(null);
       });
       document.querySelector(".root").addEventListener("click", e => {
-        const it = e.target.closest(".item"); if (it) { selectItem(it.dataset.item); return; }
+        const winRow = e.target.closest("[data-win]"); if (winRow) { selectItem(winRow.dataset.win); return; }
+        const it = e.target.closest(".item"); if (it && it.dataset.item) { selectItem(it.dataset.item); return; }
         const sk = e.target.closest(".skin"); if (sk) { const parts = sk.dataset.skin.split(":"); skinAction(parts[0], parts[1]); }
       });
       const stage = document.getElementById("stage");
-      const clearPreview = () => stage.querySelectorAll(".tile.ok, .tile.bad").forEach(t => t.classList.remove("ok", "bad"));
+      const clearPreview = () => stage.querySelectorAll(".ok, .bad").forEach(t => t.classList.remove("ok", "bad"));
 
       // The floor is the work surface; everything around it is the turntable.
       // Over a tile or a piece -> show where it would land. Anywhere else -> the room
@@ -2515,6 +2870,10 @@
       let pending = null, raf = 0;
       const spin = () => { raf = 0; if (pending !== null) { rotateView(pending); pending = null; } };
 
+      function highlightCell(cell) {
+        clearPreview();
+        cell.classList.add(cell.dataset.occ ? "bad" : "ok");
+      }
       function showFootprint(tile) {
         clearPreview();
         const spec = dropSpec(); if (!spec) return;
@@ -2541,12 +2900,15 @@
           clearPreview();
           return;
         }
+        const cell = e.target.closest(".wallcell");
+        if (cell) { highlightCell(cell); return; }
         const tile = e.target.closest(".tile");
         if (tile) showFootprint(tile); else clearPreview();
       });
       stage.addEventListener("pointerleave", () => { clearPreview(); });
       stage.addEventListener("pointerdown", e => {
         if (e.button !== undefined && e.button !== 0) return;
+        if (e.target.closest(".wallcell") || e.target.closest(".window")) return;  // let the click place/select
         const furni = e.target.closest(".furni");
         if (furni) {                                      // lifting a piece already in the room
           carry = { from: +furni.dataset.i, pid: e.pointerId, x0: e.clientX, y0: e.clientY, far: 0, ghost: null, tile: null };
@@ -2638,6 +3000,14 @@
       document.getElementById("viewLeft").onclick = () => rotateView(-NUDGE);
       document.getElementById("viewRight").onclick = () => rotateView(NUDGE);
       document.getElementById("pieceActions").addEventListener("click", e => {
+        const wb = e.target.closest("[data-wact]");
+        if (wb) {
+          const a = wb.dataset.wact;
+          if (a === "move") { state.movingWin = state.movingWin === null ? state.pickedWin : null; afterChange(); }
+          else if (a === "remove") removeWindow(state.pickedWin);
+          else pickWindow(null);
+          return;
+        }
         const b = e.target.closest("[data-act]"); if (!b) return;
         const act = b.dataset.act;
         if (act === "turn") turnPicked();
@@ -2678,7 +3048,7 @@
           }
         } else if (act === "resetRoom") {
           if (confirm("Reset the room, styles and achievements? This cannot be undone.")) {
-            state = { placed: [], floor: "wood", wall: "cream", skinsOwned: { floor: ["wood"], wall: ["cream"] }, achievements: {}, selected: null, rotated: false, picked: null, moving: null };
+            state = { placed: [], windows: [], floor: "wood", wall: "cream", skinsOwned: { floor: ["wood"], wall: ["cream"] }, achievements: {}, selected: null, rotated: false, picked: null, moving: null, pickedWin: null, movingWin: null };
             afterChange();
           }
         }
@@ -2729,7 +3099,12 @@
       wire();
       renderAll();
       checkAchievements();
-      if (location.hash === "#settings") { open("settingsModal"); renderSettings(); }
+      const openHashModal = () => {
+        if (location.hash === "#settings") { open("settingsModal"); renderSettings(); }
+        else if (location.hash === "#achievements") { renderAchievements(); open("achModal"); }
+      };
+      openHashModal();
+      window.addEventListener("hashchange", openHashModal);
     }
     init();
   </script>
